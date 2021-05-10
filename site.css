@@ -1,0 +1,19 @@
+.character {
+	text-decoration: none;
+	color: black;
+}
+
+.character:hover {
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.character a {
+	text-decoration: none;
+	color: black;
+}
+
+.character:hover a {
+	text-decoration: none;
+	font-weight: bold;
+}
