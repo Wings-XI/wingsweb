@@ -90,7 +90,12 @@ class WGWUser
 		require_once("database.php");
 		$this->unread_gm_messages = 0;
 		foreach (WGWDB::$maps as $worldid => $worlddata) {
-			$this->unread_gm_messages = $this->unread_gm_messages + $worlddata["db"]->query("SELECT messageid FROM char_gmmessage WHERE accid=$this->id AND `read`=0;")->num_rows;
+			$sqlres = $worlddata["db"]->query("SELECT messageid FROM char_gmmessage WHERE accid=$this->id AND `read`=0;");
+			$nummsg = 0;
+			if ($sqlres) {
+				$nummsg = $sqlres->num_rows;
+			}
+			$this->unread_gm_messages = $this->unread_gm_messages + $nummsg;
 		}
 	}
 	
@@ -105,7 +110,11 @@ class WGWUser
 		foreach (WGWDB::$maps as $worldid => $worlddata) {
 			$sql = "SELECT callid, assignee, `status` FROM server_gmcalls WHERE `status` = 0 OR (assignee IN (SELECT charname FROM chars WHERE accid=$this->id) AND `status` < 3)";
 			$result = $worlddata["db"]->query($sql);
-			$this->gm_pending_tickets = $this->gm_pending_tickets + $result->num_rows;
+			$nummsg = 0;
+			if ($result) {
+				$nummsg = $result->num_rows;
+			}
+			$this->gm_pending_tickets = $this->gm_pending_tickets + $nummsg;
 		}
 	}
 	

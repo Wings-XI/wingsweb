@@ -102,6 +102,10 @@ class WGWConfig
 	// IP address from this member of the server global. If there is no reverse proxy, set
 	// to null. For Cloudflare set to "HTTP_CF_CONNECTING_IP".
 	public static $reverse_proxy_origin_ip_field = null;
+	
+	// Set to true to enable submitting helpdesk tickets through the website.
+	// The server must support the helpdesk function.
+	public static $helpdesk_enabled = false;
 
 };
 

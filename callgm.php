@@ -13,6 +13,7 @@ require_once("mqconnection.php");
 require_once("user.php");
 require_once("output.php");
 require_once("login.php");
+require_once("configuration.php");
 
 global $g_wgwMyTicketsBefore;
 $g_wgwMyTicketsBefore = <<<EOS
@@ -230,6 +231,11 @@ function WGWHandleMyTickets()
 	$worldid = 100;
 	if (array_key_exists("worldid", $_REQUEST)) {
 		$worldid = intval($_REQEST["worldid"]);
+	}
+	
+	if (!WGWConfig::$helpdesk_enabled) {
+		WGWOutput::$out->write("Web based helpdesk function is disabled. Please use Discord to submit a ticket.");
+		return;
 	}
 	
 	if (array_key_exists("action", $_REQUEST)) {

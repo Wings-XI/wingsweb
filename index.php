@@ -122,6 +122,10 @@ switch ($page) {
 		require_once("itemsearch.php");
 		WGWProcessItemSearch();
 		break;
+	case "migrate":
+		require_once("migrate.php");
+		WGWDoMigration();
+		break;
 	default:
 		$not_found = true;
 }
