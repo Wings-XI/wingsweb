@@ -33,6 +33,10 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	$basic_info = $result->fetch_assoc();
 	// We will use this a lot
 	$charid = $basic_info["id"];
+	$characcount = WGWAccountIDOfChar($charid, $worldid);
+	$nameflags = $basic_info["nameflags"];
+	$is_anon = $nameflags & 0x1000 ? true : false;
+	$full_info = $characcount == WGWUser::$user->id or WGWUser::$user->is_admin();
 	WGWOutput::$out->write("<p>Server: " . WGWDB::$maps[$worldid]["name"] . "</p>");
 	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM accounts_sessions WHERE charid=$charid");
 	$isonline = $result->num_rows ? true : false;
@@ -56,61 +60,73 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	if ($ismentor) {
 		WGWOutput::$out->write("<p><b style=\"color: blue\">Mentor</b></p>");
 	}
+	
 	// Check their rank
-	$nation = "";
-	$rank_column = "";
-	$rank = 0;
-	if ($chardetails["nation"] == 0) {
-		$nation = "San d'Oria";
-		$rank_column = "rank_sandoria";
-	}
-	else if ($chardetails["nation"] == 1) {
-		$nation = "Bastok";
-		$rank_column = "rank_bastok";
-	}
-	else if ($chardetails["nation"] == 2) {
-		$nation = "Windurst";
-		$rank_column = "rank_windurst";
-	}
-	if ($rank_column) {
-		$result = WGWDB::$maps[$worldid]["db"]->query("SELECT $rank_column FROM char_profile WHERE charid=$charid");
-		if ($result->num_rows) {
-			$row = $result->fetch_row();
-			$rank = $row[0];
+	if (!$is_anon or $full_info) {
+		$nation = "";
+		$rank_column = "";
+		$rank = 0;
+		if ($chardetails["nation"] == 0) {
+			$nation = "San d'Oria";
+			$rank_column = "rank_sandoria";
 		}
+		else if ($chardetails["nation"] == 1) {
+			$nation = "Bastok";
+			$rank_column = "rank_bastok";
+		}
+		else if ($chardetails["nation"] == 2) {
+			$nation = "Windurst";
+			$rank_column = "rank_windurst";
+		}
+		if ($rank_column) {
+			$result = WGWDB::$maps[$worldid]["db"]->query("SELECT $rank_column FROM char_profile WHERE charid=$charid");
+			if ($result->num_rows) {
+				$row = $result->fetch_row();
+				$rank = $row[0];
+			}
+		}
+		if (($nation) and ($rank)) {
+			WGWOutput::$out->write("<p>Nation: $nation, Rank $rank</p>");
+		}
+		$job_str = WGWGetFullJobString($basic_info["mjob"],$basic_info["mlvl"], $basic_info["sjob"], $basic_info["slvl"]);
 	}
-	if (($nation) and ($rank)) {
-		WGWOutput::$out->write("<p>Nation: $nation, Rank $rank</p>");
+	else {
+		// Anonymous
+		$job_str = "?/?";
 	}
 	
-	WGWOutput::$out->write("<p>" . WGWGetFullJobString($basic_info["mjob"],$basic_info["mlvl"], $basic_info["sjob"], $basic_info["slvl"]) . "<br>" .
+	WGWOutput::$out->write("<p>$job_str<br>" .
 		"Current location: " . WGWGetZoneName($basic_info["pos_zone"]) . "</p>");
 	// Top table (because we're going to split the screen to two columns for better usage)
 	WGWOutput::$out->write("<table border=\"0\" style=\"width: 100%\"><tbody><tr><td style=\"width: 50%; vertical-align: top\">");
-	// Job list
-	$jobs = WGWGetJobListForChar($charid);
-	WGWOutput::$out->write("<h3>Jobs</h3><table border=\"0\" style=\"width: 15%\"><tbody>");
-	foreach ($jobs as $job => $joblevel) {
-		if ($joblevel != 0) {
-			WGWOutput::$out->write("<tr><td style=\"width: 10px;\">$job</td><td style=\"text-align: right\">$joblevel</td></tr>");
+	if (!$is_anon or $full_info) {
+		// Job list
+		$jobs = WGWGetJobListForChar($charid);
+		WGWOutput::$out->write("<h3>Jobs</h3><table border=\"0\" style=\"width: 15%\"><tbody>");
+		foreach ($jobs as $job => $joblevel) {
+			if ($joblevel != 0) {
+				WGWOutput::$out->write("<tr><td style=\"width: 10px;\">$job</td><td style=\"text-align: right\">$joblevel</td></tr>");
+			}
 		}
 	}
 	WGWOutput::$out->write("</tbody></table>");
 	WGWOutput::$out->write("</td><td style=\"width: 50%; vertical-align: top;\">");
-	WGWOutput::$out->write("<h3>Crafts</h3><table border=\"0\" style=\"width: 35%;\"><tbody>");
-	$skills = WGWGetSkillListForChar($charid);
-	// Crafting skills are 48-57
-	global $g_wgwSkills;
-	$hascrafts = false;
-	for ($i = 48; $i <= 57; $i++) {
-		if (array_key_exists($i, $skills)) {
-			WGWOutput::$out->write("<tr><td style=\"width: 10px;\">$g_wgwSkills[$i]</td><td style=\"text-align: right; width: 10px\">" . $skills[$i] / 10 . "</td></tr>");
-			$hascrafts = true;
+	if ($full_info) {
+		WGWOutput::$out->write("<h3>Crafts</h3><table border=\"0\" style=\"width: 35%;\"><tbody>");
+		$skills = WGWGetSkillListForChar($charid);
+		// Crafting skills are 48-57
+		global $g_wgwSkills;
+		$hascrafts = false;
+		for ($i = 48; $i <= 57; $i++) {
+			if (array_key_exists($i, $skills)) {
+				WGWOutput::$out->write("<tr><td style=\"width: 10px;\">$g_wgwSkills[$i]</td><td style=\"text-align: right; width: 10px\">" . $skills[$i] / 10 . "</td></tr>");
+				$hascrafts = true;
+			}
 		}
-	}
-	WGWOutput::$out->write("</tbody></table>");
-	if (!$hascrafts) {
-		WGWOutput::$out->write("No crafts are leveled");
+		WGWOutput::$out->write("</tbody></table>");
+		if (!$hascrafts) {
+			WGWOutput::$out->write("No crafts are leveled");
+		}
 	}
 	WGWOutput::$out->write("</td></tr></tbody></table>");
 }

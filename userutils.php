@@ -31,4 +31,15 @@ function WGWUserNameByID($account)
 	return false;
 }
 
+function WGWAccountIDOfChar($charid, $worldid)
+{
+	$sql = "SELECT account_id FROM " . WGWConfig::$db_prefix. "contents WHERE content_id = (SELECT content_id FROM " . WGWConfig::$db_prefix. "chars WHERE character_id = $charid AND world_id = $worldid) LIMIT 1";
+	$result = WGWDB::$con->query($sql);
+	if ($result and $result->num_rows != 0) {
+		$row = $result->fetch_row();
+		return $row[0];
+	}
+	return false;
+}
+
 ?>

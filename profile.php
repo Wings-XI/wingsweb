@@ -88,7 +88,7 @@ function WGWShowMainProfilePage()
 		WGWOutput::$out->write("No characters are associated with this account.<br>");
 	}
 	else {
-		WGWDisplayCharacterList($result);
+		WGWDisplayCharacterList($result, true);
 	}
 }
 

@@ -20,7 +20,7 @@ require_once("jobs.php");
  */
 function WGWQueryCharactersBy($where, $worldid=100, $debug=false)
 {
-	$query = "SELECT chars.charid AS id, charname, pos_zone, mjob, sjob, mlvl, slvl
+	$query = "SELECT chars.charid AS id, charname, pos_zone, mjob, sjob, mlvl, slvl, nameflags
 		FROM chars, char_stats
 		WHERE chars.charid = char_stats.charid AND $where
 		ORDER BY charname";
@@ -34,7 +34,7 @@ function WGWQueryCharactersBy($where, $worldid=100, $debug=false)
  *	Displays a list of characters as a table
  *	$cursor - Result WGWQueryCharactersBy
  */
-function WGWDisplayCharacterList($cursor)
+function WGWDisplayCharacterList($cursor, $withanon = false)
 {
 	global $g_base;
 	if (!$cursor) {
@@ -49,9 +49,16 @@ function WGWDisplayCharacterList($cursor)
 	while ($row = $cursor->fetch_assoc()) {
 		$charname_esc = htmlspecialchars($row["charname"]);
 		$charname_url = urlencode($row["charname"]);
+		if ($row["nameflags"] & 0x1000 and !$withanon) {
+			// Anonymous
+			$job_str = "?/?";
+		}
+		else {
+			$job_str = WGWGetFullJobString($row["mjob"],$row["mlvl"], $row["sjob"], $row["slvl"]);
+		}
 		WGWOutput::$out->write("<tr class=\"character\"><td><a href=\"$g_base?page=character&name=$charname_url\">$charname_esc</a></td>
 		
-			<td>" . WGWGetFullJobString($row["mjob"],$row["mlvl"], $row["sjob"], $row["slvl"]) . "</td>
+			<td>$job_str</td>
 			<td>" . WGWGetZoneName($row["pos_zone"]) . "</td>");
 	}
 	WGWOutput::$out->write("</tr></tbody></table>");
