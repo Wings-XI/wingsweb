@@ -12,6 +12,7 @@ require_once("output.php");
 require_once("database.php");
 require_once("zones.php");
 require_once("jobs.php");
+require_once("obfusutils.php");
 
  
 /**
@@ -41,11 +42,11 @@ function WGWDisplayCharacterList($cursor, $withanon = false)
 		WGWOutput::$out->write("Database query error<br>");
 		return;
 	}
-	WGWOutput::$out->write("<table border=\"0\"><tbody><tr>
+	$clear_out = "<table border=\"0\"><tbody><tr>
 		<td style=\"width: 150px\"><b>Name</b></td>
 		<td style=\"width: 150px\"><b>Job</b></td>
 		<td><b>Zone</b></td>
-		</tr>");
+		</tr>";
 	while ($row = $cursor->fetch_assoc()) {
 		$charname_esc = htmlspecialchars($row["charname"]);
 		$charname_url = urlencode($row["charname"]);
@@ -56,12 +57,13 @@ function WGWDisplayCharacterList($cursor, $withanon = false)
 		else {
 			$job_str = WGWGetFullJobString($row["mjob"],$row["mlvl"], $row["sjob"], $row["slvl"]);
 		}
-		WGWOutput::$out->write("<tr class=\"character\"><td><a href=\"$g_base?page=character&name=$charname_url\">$charname_esc</a></td>
+		$clear_out .= "<tr class=\"character\"><td><a href=\"$g_base?page=character&name=$charname_url\">$charname_esc</a></td>
 		
 			<td>$job_str</td>
-			<td>" . WGWGetZoneName($row["pos_zone"]) . "</td>");
+			<td>" . WGWGetZoneName($row["pos_zone"]) . "</td>";
 	}
-	WGWOutput::$out->write("</tr></tbody></table>");
+	$clear_out .= "</tr></tbody></table>";
+	WGWOutput::$out->write(doselfdecoding($clear_out));
 }
  
 ?>

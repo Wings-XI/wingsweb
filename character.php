@@ -16,6 +16,7 @@ require_once("database.php");
 require_once("zones.php");
 require_once("jobs.php");
 require_once("skills.php");
+require_once("obfusutils.php");
 
 function WGWShowCharacterBasicInfo($charname, $worldid=100)
 {
@@ -40,25 +41,26 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	WGWOutput::$out->write("<p>Server: " . WGWDB::$maps[$worldid]["name"] . "</p>");
 	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM accounts_sessions WHERE charid=$charid");
 	$isonline = $result->num_rows ? true : false;
+	$clear_out = "";
 	if ($isonline) {
-		WGWOutput::$out->write("<p style=\"color: green\">Online</p>");
+		$clear_out .= "<p style=\"color: green\">Online</p>";
 	}
 	else {
-		WGWOutput::$out->write("<p style=\"color: red\">Offline</p>");
+		$clear_out .= "<p style=\"color: red\">Offline</p>";
 	}
 	// If GM then only other GMs can see info
 	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM chars WHERE charid=$charid");
 	$chardetails = $result->fetch_assoc();
 	$isgm = $chardetails["gmlevel"] > 0;
 	if ($isgm) {
-		WGWOutput::$out->write("<p><b style=\"color: red\">Game Master</b></p>");
+		$clear_out .= "<p><b style=\"color: red\">Game Master</b></p>";
 		if (!WGWUser::$user->is_admin()) {
 			return;
 		}
 	}
 	$ismentor = ($chardetails["nnameflags"] & 0x2000000) != 0;
 	if ($ismentor) {
-		WGWOutput::$out->write("<p><b style=\"color: blue\">Mentor</b></p>");
+		$clear_out .= "<p><b style=\"color: blue\">Mentor</b></p>";
 	}
 	
 	// Check their rank
@@ -86,7 +88,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 			}
 		}
 		if (($nation) and ($rank)) {
-			WGWOutput::$out->write("<p>Nation: $nation, Rank $rank</p>");
+			$clear_out .= "<p>Nation: $nation, Rank $rank</p>";
 		}
 		$job_str = WGWGetFullJobString($basic_info["mjob"],$basic_info["mlvl"], $basic_info["sjob"], $basic_info["slvl"]);
 	}
@@ -95,40 +97,41 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		$job_str = "?/?";
 	}
 	
-	WGWOutput::$out->write("<p>$job_str<br>" .
-		"Current location: " . WGWGetZoneName($basic_info["pos_zone"]) . "</p>");
+	$clear_out .= "<p>$job_str<br>" .
+		"Current location: " . WGWGetZoneName($basic_info["pos_zone"]) . "</p>";
 	// Top table (because we're going to split the screen to two columns for better usage)
-	WGWOutput::$out->write("<table border=\"0\" style=\"width: 100%\"><tbody><tr><td style=\"width: 50%; vertical-align: top\">");
+	$clear_out .= "<table border=\"0\" style=\"width: 100%\"><tbody><tr><td style=\"width: 50%; vertical-align: top\">";
 	if (!$is_anon or $full_info) {
 		// Job list
 		$jobs = WGWGetJobListForChar($charid);
-		WGWOutput::$out->write("<h3>Jobs</h3><table border=\"0\" style=\"width: 15%\"><tbody>");
+		$clear_out .= "<h3>Jobs</h3><table border=\"0\" style=\"width: 15%\"><tbody>";
 		foreach ($jobs as $job => $joblevel) {
 			if ($joblevel != 0) {
-				WGWOutput::$out->write("<tr><td style=\"width: 10px;\">$job</td><td style=\"text-align: right\">$joblevel</td></tr>");
+				$clear_out .= "<tr><td style=\"width: 10px;\">$job</td><td style=\"text-align: right\">$joblevel</td></tr>";
 			}
 		}
 	}
-	WGWOutput::$out->write("</tbody></table>");
-	WGWOutput::$out->write("</td><td style=\"width: 50%; vertical-align: top;\">");
+	$clear_out .= "</tbody></table>";
+	$clear_out .= "</td><td style=\"width: 50%; vertical-align: top;\">";
 	if ($full_info) {
-		WGWOutput::$out->write("<h3>Crafts</h3><table border=\"0\" style=\"width: 35%;\"><tbody>");
+		$clear_out .= "<h3>Crafts</h3><table border=\"0\" style=\"width: 35%;\"><tbody>";
 		$skills = WGWGetSkillListForChar($charid);
 		// Crafting skills are 48-57
 		global $g_wgwSkills;
 		$hascrafts = false;
 		for ($i = 48; $i <= 57; $i++) {
 			if (array_key_exists($i, $skills)) {
-				WGWOutput::$out->write("<tr><td style=\"width: 10px;\">$g_wgwSkills[$i]</td><td style=\"text-align: right; width: 10px\">" . $skills[$i] / 10 . "</td></tr>");
+				$clear_out .= "<tr><td style=\"width: 10px;\">$g_wgwSkills[$i]</td><td style=\"text-align: right; width: 10px\">" . $skills[$i] / 10 . "</td></tr>";
 				$hascrafts = true;
 			}
 		}
-		WGWOutput::$out->write("</tbody></table>");
+		$clear_out .= "</tbody></table>";
 		if (!$hascrafts) {
-			WGWOutput::$out->write("No crafts are leveled");
+			$clear_out .= "No crafts are leveled";
 		}
 	}
-	WGWOutput::$out->write("</td></tr></tbody></table>");
+	$clear_out .= "</td></tr></tbody></table>";
+	WGWOutput::$out->write(doselfdecoding($clear_out));
 }
 
 function WGWShowCharacter()
