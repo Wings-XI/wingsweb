@@ -55,7 +55,7 @@ class WGWUser
 	}
 	
 	public function is_admin()
-	{		
+	{
 		return $this->priv & 0x08 ? true : false;
 	}
 	
@@ -149,7 +149,7 @@ class WGWUser
 		}
 		foreach (WGWDB::$maps as $worldid => $worlddata) {
 			$result = $worlddata["db"]->query("SELECT id, status, priv, current_email FROM accounts WHERE login='$user_escaped' AND password=PASSWORD('$pass_escaped') LIMIT 1");
-			if ($result->num_rows != 0) {
+			if ($result and $result->num_rows != 0) {
 				$salt = $this->generate_salt(32);
 				$salt_escaped = WGWDB::$con->real_escape_string($salt);
 				$pass_hash = WGWDB::$con->real_escape_string(hash_pbkdf2("sha256", $pass, $salt . WGWConfig::$hash_secret, 2048));
@@ -195,11 +195,11 @@ class WGWUser
 		}
 		$this->name = $user;
 		$this->id = $row[0];
-		$this->status = $row[6];
+		$this->status = intval($row[6]);
 		$this->priv = $row[7];
 		$this->email = $row[3];
-		$this->expansions = $row[4];
-		$this->features = $row[5];
+		$this->expansions = intval($row[4]);
+		$this->features = intval($row[5]);
 		$this->log_access();
 		$this->lastrefresh = time();
 		$this->update_gm_msg_count();
@@ -236,6 +236,10 @@ class WGWUser
 		$this->id = 0;
 		$this->email = "";
 		$this->params = array();
+		$this->status = 0;
+		$this->priv = 0;
+		$this->expansions = 0;
+		$this->features = 0;
 		$this->unread_gm_messages = 0;
 		$this->gm_pending_tickets = 0;
 	}

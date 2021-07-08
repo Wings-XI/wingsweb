@@ -36,7 +36,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	$characcount = WGWAccountIDOfChar($charid, $worldid);
 	$nameflags = $basic_info["nameflags"];
 	$is_anon = $nameflags & 0x1000 ? true : false;
-	$full_info = $characcount == WGWUser::$user->id or WGWUser::$user->is_admin();
+	$full_info = ($characcount == WGWUser::$user->id or WGWUser::$user->is_admin());
 	WGWOutput::$out->write("<p>Server: " . WGWDB::$maps[$worldid]["name"] . "</p>");
 	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM accounts_sessions WHERE charid=$charid");
 	$isonline = $result->num_rows ? true : false;
