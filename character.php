@@ -131,7 +131,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		}
 	}
 	$clear_out .= "</td></tr></tbody></table>";
-	WGWOutput::$out->write(doselfdecoding($clear_out));
+	WGWOutput::$out->write(WGWGetSelfDecodigStr($clear_out));
 }
 
 function WGWShowCharacter()

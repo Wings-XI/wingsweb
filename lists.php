@@ -63,7 +63,7 @@ function WGWDisplayCharacterList($cursor, $withanon = false)
 			<td>" . WGWGetZoneName($row["pos_zone"]) . "</td>";
 	}
 	$clear_out .= "</tr></tbody></table>";
-	WGWOutput::$out->write(doselfdecoding($clear_out));
+	WGWOutput::$out->write(WGWGetSelfDecodigStr($clear_out));
 }
  
 ?>

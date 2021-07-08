@@ -15,7 +15,7 @@ EOL;
 global $wgwhasscript;
 $wgwhasscript = false;
 
-function dorollingxor($indata, $inkey)
+function WGWDoRollingXOR($indata, $inkey)
 {
 	$keybytes = array($inkey & 0xFF, ($inkey >> 8) & 0xFF, ($inkey >> 16) & 0xFF, ($inkey >> 24) & 0xFF);
 	$i = 0;
@@ -27,17 +27,17 @@ function dorollingxor($indata, $inkey)
 	return $res;
 }
 
-function doencode($indata, $inkey)
+function WGWDoObfuscate($indata, $inkey)
 {
-	return base64_encode(dorollingxor($indata, $inkey));
+	return base64_encode(WGWDoRollingXOR($indata, $inkey));	
 }
 
-function dodecode($indata, $inkey)
+function WGWDoDeobfuscate($indata, $inkey)
 {
-	return dorollingxor(base64_decode($indata), $inkey);
+	return WGWDoRollingXOR(base64_decode($indata), $inkey);
 }
 
-function doselfdecoding($indata)
+function WGWGetSelfDecodigStr($indata)
 {
 	global $wgwhasscript;
 	global $wgwobfuscatedscript;
@@ -52,7 +52,7 @@ function doselfdecoding($indata)
 	}
 	$out .= "</script><span id=\"$spanid\"></span>";
 	$out .= "<script type=\"text/javascript\">document.getElementById(\"$spanid\").innerHTML=document[_0x6af4a8(0x1b8)](\"";
-	$out .= doencode($indata, $key);
+	$out .= WGWDoObfuscate($indata, $key);
 	$out .= "\", _$spanid);</script>";
 	return $out;
 }
