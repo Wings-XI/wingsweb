@@ -42,4 +42,26 @@ function WGWAccountIDOfChar($charid, $worldid)
 	return false;
 }
 
+function WGWIsEmailDomainBanned($domain)
+{
+	$domain_escaped = WGWDB::$con->real_escape_string($domain);
+	$result = WGWDB::$con->query("SELECT domain FROM " . WGWConfig::$db_prefix . "blocked_domains WHERE domain='$domain' LIMIT 1");
+	if ($result->num_rows != 0) {
+		return true;
+	}
+	return false;
+}
+
+function WGWIsIPAddressBanned($ipaddress)
+{
+	$ip_escaped = WGWDB::$con->real_escape_string($ipaddress);
+	//$sql = "SELECT network_address FROM " . WGWConfig::$db_prefix . "blocked_ranges WHERE (INET_ATON(network_address) && INET_ATON(subnet_mask)) = (INET_ATON(\"$ip_escaped\") && INET_ATON(subnet_mask)) LIMIT 1;";
+	//echo $sql;exit;
+	$result = WGWDB::$con->query("SELECT network_address FROM " . WGWConfig::$db_prefix . "blocked_ranges WHERE (INET_ATON(network_address) && INET_ATON(subnet_mask)) = (INET_ATON(\"$ip_escaped\") && INET_ATON(subnet_mask)) LIMIT 1;");
+	if ($result->num_rows != 0) {
+		return true;
+	}
+	return false;
+}
+
 ?>

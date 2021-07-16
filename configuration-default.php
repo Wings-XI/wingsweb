@@ -11,9 +11,6 @@
  *	To install, copy this file as configuration.php and change the values as needed.
  */
 
-require_once("throwaway.php");
-global $g_wgwThrowAwayEmails;
-
 class WGWConfig
 {
 	// This will enable debug pages, do not use in producion
@@ -43,8 +40,6 @@ class WGWConfig
 	public static $signup_admin_verify_required = false;
 	// Limit the number of accounts per IP address. Set to zero to allow unlimited accounts.
 	public static $signup_accounts_per_ip = 1;
-	// List of throwaway email domains to blacklist
-	public static $email_domain_blacklist = array();
 	
 	// Should we use reCaptcha (v2) for signups
 	public static $recaptcha_enabled = false;
@@ -108,9 +103,5 @@ class WGWConfig
 	public static $helpdesk_enabled = false;
 
 };
-
-// List of disposable e-mail domains. Registration using addresses from
-// these domains will be rejected.
-WGWConfig::$email_domain_blacklist = $g_wgwThrowAwayEmails;
 
 ?>

@@ -259,8 +259,8 @@ class WGWUser
 			return "Invalid e-mail address<br>";
 		}
 		$email_domain = strtolower(substr(strrchr($email, "@"), 1));
-		if (in_array($email_domain, WGWConfig::$email_domain_blacklist)) {
-			return "Throwaway e-mail addresses are not allowed<br>";
+		if (WGWIsEmailDomainBanned($email_domain)) {
+			return "The e-mail address is not allowed<br>";
 		}
 		require_once("database.php");
 		$email_escaped = WGWDB::$con->real_escape_string($email);
@@ -381,6 +381,10 @@ class WGWUser
 				$ip_valid = false;
 			}
 		}
+		if (WGWIsIPAddressBanned($ip)) {
+			$error_msg .= "Registrations from this IP address are not allowed<br>";
+			$ip_valid = false;
+		}
 		$password_valid = true;
 		if (strlen($pass) < 6) {
 			$error_msg .= "Password is too short (minimum 6 characters required)<br>";
@@ -400,8 +404,8 @@ class WGWUser
 			$email_valid = false;
 		}
 		$email_domain = strtolower(substr(strrchr($email, "@"), 1));
-		if (in_array($email_domain, WGWConfig::$email_domain_blacklist)) {
-			$error_msg .= "Throwaway e-mail addresses are not allowed<br>";
+		if (WGWIsEmailDomainBanned($email_domain)) {
+			$error_msg .= "The e-mail address is not allowed<br>";
 			$email_valid = false;
 		}
 		if ($email_valid) {
