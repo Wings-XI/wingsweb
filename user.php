@@ -258,11 +258,11 @@ class WGWUser
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			return "Invalid e-mail address<br>";
 		}
+		require_once("database.php");
 		$email_domain = strtolower(substr(strrchr($email, "@"), 1));
 		if (WGWIsEmailDomainBanned($email_domain)) {
 			return "The e-mail address is not allowed<br>";
 		}
-		require_once("database.php");
 		$email_escaped = WGWDB::$con->real_escape_string($email);
 		$result = WGWDB::$con->query("SELECT id FROM " . WGWConfig::$db_prefix . "accounts WHERE email='$email_escaped' LIMIT 1");
 		if ($result->num_rows != 0) {
