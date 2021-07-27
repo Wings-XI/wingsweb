@@ -51,7 +51,6 @@ $g_wgwMenu = <<<EOS
             <a href="$g_base?page=play">How to connect</a><br>
 			<a href="$g_base?page=faqs">FAQs</a><br>
 			<a href="$g_base?page=support">Support</a><br>
-			<a href="https://wingsxi.com/forum/viewforum.php?f=22">Patch Notes</a><br>
 			
 			<br><b>Tools</b><br>
 			<a href="$g_base?page=onlineusers">Who's Online</a><br>
@@ -62,17 +61,19 @@ $g_wgwMenu = <<<EOS
 			<br><b>Community</b><br>
 			<a href="/forum/">Forums</a><br>
 			<!-- Old discord now archived <a href="https://discord.gg/StXNpgXZtV">Discord</a><br> -->
-			<a href="https://discord.gg/wNpVm35wbz">Discord</a>
+			<a href="https://discord.gg/wNpVm35wbz">Join our Discord</a>
 EOS;
 
 global $g_wgwLoggedInMenu;
 $g_wgwLoggedInMenu = <<<EOS
+<br><b>Account Management</b><br>
 <a href="$g_base?page=profile">My Account</a><br>
 <a href="$g_base?page=logout">Log out</a><br>
 EOS;
 
 global $g_wgwNotLoggedInMenu;
 $g_wgwNotLoggedInMenu = <<<EOS
+<br><b>Account Management</b><br>
 <a href="$g_base?page=login">Log in</a><br>
 <a href="$g_base?page=signup">Sign up</a><br>
 EOS;
