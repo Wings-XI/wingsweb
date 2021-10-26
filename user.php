@@ -65,6 +65,20 @@ class WGWUser
 		return $this->is_admin();
 	}
 	
+	public function has_access_to_world($worldid)
+	{
+		if (!array_key_exists($worldid, WGWDB::$maps)) {
+			// If the world ID is invalid or inactive nobody has access
+			return false;
+		}
+		if (WGWDB::$maps[$worldid]["test"] && (($this->priv & 0x02) == 0)) {
+			// The target world is a test world and the user does not
+			// have beta access
+			return false;
+		}
+		return true;
+	}
+	
 	public function log_access($id=null, $ip=null, $operation=1, $result=true)
 	{
 		// Change the DB and make charid optional for this to work

@@ -63,6 +63,18 @@ $g_wgwPasswordChangeForm = <<<EOS
 	</center>
 EOS;
 
+function WGWShowWorldUserChars($worldid=100)
+{
+	$result = WGWQueryCharactersBy("chars.accid = " . WGWUser::$user->id, $worldid);
+	if (!$result || $result->num_rows == 0) {
+		return 0;
+	}
+	$num_chars = $result->num_rows;
+	WGWOutput::$out->write("<p>World: " . WGWDB::$maps[$worldid]["name"] . "<br>");
+	WGWDisplayCharacterList($result, true, $worldid);
+	WGWOutput::$out->write("</p>");
+}
+
 function WGWShowMainProfilePage()
 {
 	global $g_base;
@@ -83,12 +95,15 @@ function WGWShowMainProfilePage()
 	WGWOutput::$out->write("<a href=\"$g_base?page=changemail\">Change E-mail</a><br>");
 	WGWOutput::$out->write("<a href=\"$g_base?page=changepassword\">Change Password</a><br><br>");
 	WGWOutput::$out->write("<h3>My Characters:</h3>");
-	$result = WGWQueryCharactersBy("chars.accid = " . WGWUser::$user->id);
-	if (!$result) {
-		WGWOutput::$out->write("No characters are associated with this account.<br>");
+	$num_chars = 0;
+	foreach (WGWDB::$maps as $worldid => $worlddata) {
+		if (!WGWUser::$user->has_access_to_world($worldid)) {
+			continue;
+		}
+		$num_chars = $num_chars + WGWShowWorldUserChars($worldid);
 	}
-	else {
-		WGWDisplayCharacterList($result, true);
+	if ($num_chars == 0) {
+		WGWOutput::$out->write("No characters are associated with this account.<br>");
 	}
 }
 

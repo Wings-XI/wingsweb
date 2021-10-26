@@ -35,7 +35,7 @@ function WGWQueryCharactersBy($where, $worldid=100, $debug=false)
  *	Displays a list of characters as a table
  *	$cursor - Result WGWQueryCharactersBy
  */
-function WGWDisplayCharacterList($cursor, $withanon = false)
+function WGWDisplayCharacterList($cursor, $withanon = false, $worldid=100)
 {
 	global $g_base;
 	if (!$cursor) {
@@ -57,7 +57,7 @@ function WGWDisplayCharacterList($cursor, $withanon = false)
 		else {
 			$job_str = WGWGetFullJobString($row["mjob"],$row["mlvl"], $row["sjob"], $row["slvl"]);
 		}
-		$clear_out .= "<tr class=\"character\"><td><a href=\"$g_base?page=character&name=$charname_url\">$charname_esc</a></td>
+		$clear_out .= "<tr class=\"character\"><td><a href=\"$g_base?page=character&worldid=$worldid&name=$charname_url\">$charname_esc</a></td>
 		
 			<td>$job_str</td>
 			<td>" . WGWGetZoneName($row["pos_zone"]) . "</td>";

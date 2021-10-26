@@ -101,7 +101,12 @@ class WGWConfig
 	// Set to true to enable submitting helpdesk tickets through the website.
 	// The server must support the helpdesk function.
 	public static $helpdesk_enabled = false;
-
+	// Allow users to change their race and appearance via the web interface.
+	// 0 - Disable
+	// 1 - Allow only once
+	// 2 - Allow without restriction
+	public static $allow_race_change = 0;
+	
 };
 
 ?>

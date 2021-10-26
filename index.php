@@ -55,11 +55,11 @@ switch ($page) {
 		break;
 	case "onlineusers":
 		require_once("onlineusers.php");
-		WGWPrintOnlineUsers();
+		WGWShowOnlineUsersPage();
 		break;
 	case "onlinementors":
 		require_once("onlinementors.php");
-		WGWPrintOnlineMentors();
+		WGWShowOnlineMentorsPage();
 		break;
 	case "login":
 		require_once("login.php");
@@ -125,6 +125,10 @@ switch ($page) {
 	case "migrate":
 		require_once("migrate.php");
 		WGWDoMigration();
+		break;
+	case "changerace":
+		require_once("changerace.php");
+		WGWRaceChange();
 		break;
 	default:
 		$not_found = true;

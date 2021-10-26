@@ -26,6 +26,10 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	$char_sql = WGWDB::$con->real_escape_string($charname);
 	WGWOutput::$out->title = "Character: $char_esc";
 	WGWOutput::$out->write("<h2>$char_esc</h2>");
+	if (!WGWUser::$user->has_access_to_world($worldid)) {
+		WGWOutput::$out->write("The specified world does not exist or access is denied.<br>");
+		die(0);
+	}
 	$result = WGWQueryCharactersBy("charname = '$char_sql'", $worldid);
 	if ((!$result) or ($result->num_rows == 0)) {
 		WGWOutput::$out->write("There is no character named $char_esc on this server.<br>");
@@ -54,7 +58,8 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	$isgm = $chardetails["gmlevel"] > 0;
 	if ($isgm) {
 		$clear_out .= "<p><b style=\"color: red\">Game Master</b></p>";
-		if (!WGWUser::$user->is_admin()) {
+		if (!$full_info) {
+			WGWOutput::$out->write(WGWGetSelfDecodigStr($clear_out));
 			return;
 		}
 	}
@@ -103,7 +108,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	$clear_out .= "<table border=\"0\" style=\"width: 100%\"><tbody><tr><td style=\"width: 50%; vertical-align: top\">";
 	if (!$is_anon or $full_info) {
 		// Job list
-		$jobs = WGWGetJobListForChar($charid);
+		$jobs = WGWGetJobListForChar($charid, $worldid);
 		$clear_out .= "<h3>Jobs</h3><table border=\"0\" style=\"width: 15%\"><tbody>";
 		foreach ($jobs as $job => $joblevel) {
 			if ($joblevel != 0) {
@@ -115,7 +120,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	$clear_out .= "</td><td style=\"width: 50%; vertical-align: top;\">";
 	if ($full_info) {
 		$clear_out .= "<h3>Crafts</h3><table border=\"0\" style=\"width: 35%;\"><tbody>";
-		$skills = WGWGetSkillListForChar($charid);
+		$skills = WGWGetSkillListForChar($charid, $worldid);
 		// Crafting skills are 48-57
 		global $g_wgwSkills;
 		$hascrafts = false;
