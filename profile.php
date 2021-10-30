@@ -65,7 +65,13 @@ EOS;
 
 function WGWShowWorldUserChars($worldid=100)
 {
-	$result = WGWQueryCharactersBy("chars.accid = " . WGWUser::$user->id, $worldid);
+	$contents = WGWGetAccountContentIDs(WGWUser::$user->id);
+	if (!$contents) {
+		return 0;
+	}
+	$content_list = implode(", ", array_map('strval', $contents));
+	// $result = WGWQueryCharactersBy("chars.accid = " . WGWUser::$user->id, $worldid);
+	$result = WGWQueryCharactersBy("chars.content_id IN ($content_list)", $worldid);
 	if (!$result || $result->num_rows == 0) {
 		return 0;
 	}
@@ -73,6 +79,7 @@ function WGWShowWorldUserChars($worldid=100)
 	WGWOutput::$out->write("<p>World: " . WGWDB::$maps[$worldid]["name"] . "<br>");
 	WGWDisplayCharacterList($result, true, $worldid);
 	WGWOutput::$out->write("</p>");
+	return $num_chars;
 }
 
 function WGWShowMainProfilePage()

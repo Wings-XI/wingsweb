@@ -42,7 +42,7 @@ EOS;
 
 function WGWSetRaceLook($charid, $worldid, $newdata)
 {
-	if (!is_array($new_data)) {
+	if (!is_array($newdata)) {
 		return "No data to set.";
 	}
 	if (!array_key_exists("race", $newdata) || $newdata["race"] < 1 || $newdata["race"] > 8) {
@@ -146,13 +146,26 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 		if ($already_changed) {
 			WGWOutput::$out->write("<p>You have already changed your race; cannot change again.</p>");
 		}
-		else {
+		else if ($newdata == null) {
 			WGWOutput::$out->write("<p>You can only change your race once so choose wisely.</p>");
 			$disable = "";
 		}
 	}
 	else {
 		WGWOutput::$out->write("<p>Race changes are currently disabled.</p>");
+	}
+	
+	// If we already have posted data, change the race now
+	if (is_array($newdata)) {
+		WGWSetRaceLook($charid, $worldid, $newdata);
+		// Reload character data so we can display the new details in the form
+		$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM char_look WHERE charid=$charid");
+		if ((!$result) or ($result->num_rows == 0)) {
+			WGWOutput::$out->write("Race query failed.<br>");
+			die(0);
+		}
+		$char_look = $result->fetch_assoc();
+		WGWOutput::$out->write("<p>Race successfully changed.</p>");
 	}
 	
 	$change_warn = "";
@@ -186,7 +199,7 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 	WGWOutput::$out->write("</select></td></tr>\n");
 	WGWOutput::$out->write("</tbody></table>\n");
 	WGWOutput::$out->write("<p><b>Do not change your race if you have any RSE pieces equipped!</b></p>\n");
-	WGWOutput::$out->write("<p><input type=\"submit\" value=\"Change\">&nbsp;&nbsp;<input type=\"reset\" value=\"Reset\"></p></form>\n");
+	WGWOutput::$out->write("<p><input type=\"submit\" value=\"Change\" $disable>&nbsp;&nbsp;<input type=\"reset\" value=\"Reset\" $disable></p></form>\n");
 }
 
 function WGWRaceChange()

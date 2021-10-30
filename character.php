@@ -136,6 +136,14 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		}
 	}
 	$clear_out .= "</td></tr></tbody></table>";
+	
+	if ($full_info) {
+		// Options menu shown only to the character owner and GMs
+		$clear_out .= "<p>";
+		$clear_out .= "<a href=\"$g_base?page=changerace&name=$char_esc&worldid=$worldid\">Change race and appearance</a>";
+		$clear_out .= "</p>";
+	}
+	
 	WGWOutput::$out->write(WGWGetSelfDecodigStr($clear_out));
 }
 

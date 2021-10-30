@@ -43,6 +43,10 @@ function WGWShowItemInfoById($itemid, $worldid=100)
 		WGWOutput::$out->write("Item ID must be numeric.<br>");
 		die(0);
 	}
+	if (!WGWUser::$user->has_access_to_world($worldid)) {
+		WGWOutput::$out->write("The specified world does not exist or access is denied.<br>");
+		die(0);
+	}
 	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM item_basic WHERE itemid=$itemid");
 	if ($result->num_rows == 0) {
 		WGWOutput::$out->write("No such item.<br>");
@@ -52,6 +56,7 @@ function WGWShowItemInfoById($itemid, $worldid=100)
 	$item_name = htmlspecialchars(ucfirst(str_replace("_", " ", $item_details["name"])));
 	WGWOutput::$out->title = "Item: $item_name";
 	WGWOutput::$out->write("<h2>$item_name</h2>");
+	WGWOutput::$out->write("<p>Server: " . WGWDB::$maps[$worldid]["name"] . "</p>");
 	if (($item_details["flags"] & $g_wgwItemFlags["ITEM_FLAG_EX"]) &&
 		($item_details["flags"] & $g_wgwItemFlags["ITEM_FLAG_RARE"])) {
 		WGWOutput::$out->write("<p><b>Rare / Exclusive</b></p>");

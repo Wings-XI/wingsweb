@@ -34,13 +34,32 @@ function WGWUserNameByID($account)
 
 function WGWAccountIDOfChar($charid, $worldid)
 {
-	$sql = "SELECT account_id FROM " . WGWConfig::$db_prefix. "contents WHERE content_id = (SELECT content_id FROM " . WGWConfig::$db_prefix. "chars WHERE character_id = $charid AND world_id = $worldid) LIMIT 1";
+	$sql = "SELECT account_id FROM " . WGWConfig::$db_prefix . "contents WHERE content_id = (SELECT content_id FROM " . WGWConfig::$db_prefix. "chars WHERE character_id = $charid AND world_id = $worldid) LIMIT 1";
 	$result = WGWDB::$con->query($sql);
 	if ($result and $result->num_rows != 0) {
 		$row = $result->fetch_row();
 		return $row[0];
 	}
 	return false;
+}
+
+function WGWGetAccountContentIDs($account, $include_disabled=false)
+{
+	$sql = "SELECT content_id FROM " . WGWConfig::$db_prefix . "contents WHERE account_id = $account";
+	if (!$include_disabled) {
+		$sql .= " AND enabled = 1";
+	}
+	$result = WGWDB::$con->query($sql);
+	if (!$result) {
+		return false;
+	}
+	$contents = array();
+	$row = $result->fetch_row();
+	while ($row) {
+		$contents[] = $row[0];
+		$row = $result->fetch_row();
+	}
+	return $contents;
 }
 
 function WGWIsEmailDomainBanned($domain)
