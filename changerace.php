@@ -156,7 +156,7 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 	}
 	
 	// If we already have posted data, change the race now
-	if ($disable != "" && is_array($newdata)) {
+	if ($disable == "" && is_array($newdata)) {
 		WGWSetRaceLook($charid, $worldid, $newdata);
 		// Reload character data so we can display the new details in the form
 		$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM char_look WHERE charid=$charid");
