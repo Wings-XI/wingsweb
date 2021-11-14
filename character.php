@@ -17,6 +17,7 @@ require_once("zones.php");
 require_once("jobs.php");
 require_once("skills.php");
 require_once("obfusutils.php");
+require_once("configuration.php");
 
 function WGWShowCharacterBasicInfo($charname, $worldid=100)
 {
@@ -55,7 +56,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	// If GM then only other GMs can see info
 	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM chars WHERE charid=$charid");
 	$chardetails = $result->fetch_assoc();
-	$isgm = $chardetails["gmlevel"] > 0;
+	$isgm = $chardetails["gmlevel"] >= WGWConfig::$gm_threshold;
 	if ($isgm) {
 		$clear_out .= "<p><b style=\"color: red\">Game Master</b></p>";
 		if (!$full_info) {

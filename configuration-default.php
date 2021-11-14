@@ -106,6 +106,8 @@ class WGWConfig
 	// 1 - Allow only once
 	// 2 - Allow without restriction
 	public static $allow_race_change = 0;
+	// Do not display information on GMs this level or above
+	public static $gm_threshold = 1;
 	
 };
 

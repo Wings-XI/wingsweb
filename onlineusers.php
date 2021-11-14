@@ -30,7 +30,7 @@ function WGWPrintOnlineUsers($worldid=100)
 	}
 	$where = "chars.charid IN (SELECT charid FROM accounts_sessions)";
 	if (!WGWUser::$user->is_admin()) {
-		$where .= " AND chars.gmlevel = 0";
+		$where .= " AND chars.gmlevel < " . strval(WGWConfig::$gm_threshold);
 	}
 	$result = WGWQueryCharactersBy($where, $worldid);	
 	WGWOutput::$out->write("<p>$result->num_rows players currently online.</p>");

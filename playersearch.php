@@ -67,7 +67,7 @@ function WGWProcessPlayerSearch()
 		$name_esc = $result = WGWDB::$con->real_escape_string($name);
 		$where = "charname LIKE '%$name_esc%'";
 		if (!WGWUser::$user->is_admin()) {
-			$where .= " AND gmlevel = 0";
+			$where .= " AND gmlevel < " . strval(WGWConfig::$gm_threshold);
 		}
 		if (!WGWUser::$user->has_access_to_world($worldid)) {
 			WGWOutput::$out->write("<b style=\"color: red\">The selected world does not exist or access is denied</b>");

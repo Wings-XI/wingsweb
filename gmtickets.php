@@ -12,6 +12,7 @@ require_once("database.php");
 require_once("user.php");
 require_once("callgm.php");
 require_once("zones.php");
+require_once("configuration.php");
 
 // List of tickets
 
@@ -86,7 +87,7 @@ function WGWAssignTicket($callid, $gmid, $worldid=100)
 	$status = $row["status"];
 	// GMs can only assign tickets to themselves
 	$accid = WGWUser::$user->id;
-	$sql = "SELECT charname FROM chars WHERE charid=$gmid AND accid=$accid AND gmlevel > 0";
+	$sql = "SELECT charname FROM chars WHERE charid=$gmid AND accid=$accid AND gmlevel >= " . strval(WGWConfig::$gm_threshold);
 	$result = WGWDB::$maps[$worldid]["db"]->query($sql);
 	if ($result->num_rows <= 0) {
 		return "You can only assign tickets to your own GM characters.";
@@ -133,7 +134,7 @@ function WGWReplyToTicket($callid, $gmid, $message, $close=false, $worldid=100)
 	}
 	// GMs can only reply as themselves
 	$accid = WGWUser::$user->id;
-	$sql = "SELECT charname FROM chars WHERE charid=$gmid AND accid=$accid AND gmlevel > 0";
+	$sql = "SELECT charname FROM chars WHERE charid=$gmid AND accid=$accid AND gmlevel >= " . strval(WGWConfig::$gm_threshold);
 	$result = WGWDB::$maps[$worldid]["db"]->query($sql);
 	if ($result->num_rows <= 0) {
 		return "You can only reply as one of your own GM characters.";
@@ -221,7 +222,7 @@ function DisplayGMCharSelect($worldid=100)
 	WGWForceAdmin();
 	
 	$accid = WGWUser::$user->id;
-	$sql = "SELECT charid, charname FROM chars WHERE accid=$accid AND gmlevel > 0";
+	$sql = "SELECT charid, charname FROM chars WHERE accid=$accid AND gmlevel >= ". strval(WGWConfig::$gm_threshold);
 	$result = WGWDB::$maps[$worldid]["db"]->query($sql);
 	if ($result->num_rows <= 0) {
 		// No GM chars

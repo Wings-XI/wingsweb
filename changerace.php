@@ -17,6 +17,7 @@ require_once("database.php");
 //require_once("jobs.php");
 //require_once("skills.php");
 //require_once("obfusutils.php");
+require_once("configuration.php");
 
 global $g_WGWRaceMap;
 $g_WGWRaceMap = array(1 => "Hume (Male)",
@@ -94,7 +95,7 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 	$mychar = ($characcount == WGWUser::$user->id or WGWUser::$user->is_admin());
 	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM chars WHERE charid=$charid");
 	$chardetails = $result->fetch_assoc();
-	$isgm = $chardetails["gmlevel"] > 0;
+	$isgm = $chardetails["gmlevel"] >= WGWConfig::$gm_threshold;
 	if ($isgm) {
 		if (!WGWUser::$user->is_admin() && !$mychar) {
 			WGWOutput::$out->write("Cannot display information on Game Master characters.<br>");
@@ -113,6 +114,7 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 	
 	// Check if we're allowed to change race
 	$disable = " disabled";
+	$change_go = false;
 	$change_allowed = WGWConfig::$allow_race_change;
 	if (!$mychar) {
 		// Never allow changing of other people's characters
@@ -123,10 +125,12 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 	}
 	else if (WGWUser::$user->is_admin()) {
 		// Admins not subject to change policies
+		$change_go = true;
 		$disable = "";
 	}
 	else if ($change_allowed == 2) {
 		// Always allowed
+		$change_go = true;
 		$disable = "";
 	}
 	else if ($change_allowed == 1) {
@@ -146,9 +150,12 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 		if ($already_changed) {
 			WGWOutput::$out->write("<p>You have already changed your race; cannot change again.</p>");
 		}
-		else if ($newdata == null) {
-			WGWOutput::$out->write("<p>You can only change your race once so choose wisely.</p>");
-			$disable = "";
+		else {
+			if ($newdata == null) {
+				WGWOutput::$out->write("<p>You can only change your race once so choose wisely.</p>");
+				$disable = "";
+			}
+			$change_go = true;
 		}
 	}
 	else {
@@ -156,7 +163,7 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 	}
 	
 	// If we already have posted data, change the race now
-	if ($disable == "" && is_array($newdata)) {
+	if (($change_go == true) && (is_array($newdata))) {
 		WGWSetRaceLook($charid, $worldid, $newdata);
 		// Reload character data so we can display the new details in the form
 		$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM char_look WHERE charid=$charid");
