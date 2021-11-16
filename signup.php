@@ -41,6 +41,7 @@ $g_wgwSignupPage = <<<EOS
 						<td>Email address: </td>
 						<td><input type="text" name="email" size="38"></td>
 					</tr>
+					%VERIFYWARN%
 					<tr>
 						<td></td>
 						<td>%CAPTCHA%</td>
@@ -102,6 +103,12 @@ function WGWShowSignupForm($error_msg)
 	}
 	else {
 		$signup_page = str_replace("%CAPTCHA%", "", $signup_page);
+	}
+	if (WGWConfig::$verify_email) {
+		$signup_page = str_replace("%VERIFYWARN%", "<tr><td colspan=\"2\">A verification link will be sent to the email address provided.<br>Verification of the address is required before the account can be used.</td></tr>", $signup_page);
+	}
+	else {
+		$signup_page = str_replace("%VERIFYWARN%", "", $signup_page);
 	}
 	WGWOutput::$out->write($signup_page);
 	die(0);
