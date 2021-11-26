@@ -17,7 +17,7 @@ class WGWUser
 	public static $user;
 	
 	public $name = "";
-	public $id = 0;
+	public $id = -1;
 	public $email = "";
 	
 	// Bitmask of installed expansions
@@ -51,7 +51,7 @@ class WGWUser
 	
 	public function is_logged_in()
 	{
-		return (($this->name != "") and ($this->id != 0));
+		return (($this->name != "") and ($this->id > 0));
 	}
 	
 	public function is_admin()
