@@ -12,6 +12,7 @@ require_once("output.php");
 require_once("login.php");
 require_once("lists.php");
 require_once("user.php");
+require_once("userutils.php");
 require_once("database.php");
 require_once("zones.php");
 require_once("jobs.php");
@@ -56,6 +57,11 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	// If GM then only other GMs can see info
 	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM chars WHERE charid=$charid");
 	$chardetails = $result->fetch_assoc();
+	if ($full_info) {
+		$create_time = $chardetails["timecreated"];
+		$last_play = $chardetails["lastupdate"];
+		$clear_out .= "<p>Creation time: $create_time<br>Last login: $last_play</p>";
+	}
 	$isgm = $chardetails["gmlevel"] >= WGWConfig::$gm_threshold;
 	if ($isgm) {
 		$clear_out .= "<p><b style=\"color: red\">Game Master</b></p>";
@@ -141,6 +147,12 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	if ($full_info) {
 		// Options menu shown only to the character owner and GMs
 		$clear_out .= "<p>";
+		if (WGWUser::$user->is_admin()) {
+			$accid = WGWAccountIDOfChar($charid, $worldid);
+			$accname = WGWUserNameByID($accid);
+			$accname_escaped = htmlspecialchars($accname);
+			$clear_out .= "Account: <a href=\"$g_base?page=profile&account=$accname_escaped\">$accname_escaped</a><br>";
+		}
 		$clear_out .= "<a href=\"$g_base?page=changerace&name=$char_esc&worldid=$worldid\">Change race and appearance</a>";
 		$clear_out .= "</p>";
 	}

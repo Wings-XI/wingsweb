@@ -73,11 +73,6 @@ switch ($page) {
 		require_once("signup.php");
 		WGWProcessSignup();
 		break;
-	/*case "signups":
-		require_once("signups.php");
-		WGWProcessSignup();
-		break;
-	*/
 	case "activate":
 		require_once("activation.php");
 		WGWProcessActivation();
@@ -129,6 +124,10 @@ switch ($page) {
 	case "changerace":
 		require_once("changerace.php");
 		WGWRaceChange();
+		break;
+	case "countries":
+		require_once("countries.php");
+		DoCountryStats();
 		break;
 	default:
 		$not_found = true;
