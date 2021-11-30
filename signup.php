@@ -12,6 +12,7 @@ require_once("output.php");
 require_once("user.php");
 require_once("configuration.php");
 require_once("serverutils.php");
+require_once("database.php");
 
 global $g_wgwSignupPage;
 $g_wgwSignupPage = <<<EOS
@@ -81,6 +82,24 @@ Please note that activation links are valid for 10 minutes.<br>
 <a href="$g_base?page=resend">Resend activation mail</a><br>
 EOS;
 
+function WGWIsThrottleBlocked()
+{
+	if (WGWConfig::$signup_threshold_accounts == 0 || WGWConfig::$signup_threshold_period == 0) {
+		// Throttling disabled.
+		return 0;
+	}
+	$num_acc = WGWConfig::$signup_threshold_accounts;
+	$sql = "SELECT TIMESTAMPDIFF(SECOND, MIN(timecreated), NOW()) AS timethreshold FROM (SELECT timecreated FROM ww_accounts ORDER BY timecreated DESC LIMIT $num_acc) AS creatime;";
+	$result = WGWDB::$con->query($sql);
+	if (!$result || $result->num_rows == 0) {
+		return 0;
+	}
+	$row = $result->fetch_row();
+	if ($row[0] < WGWConfig::$signup_threshold_period) {
+		return WGWConfig::$signup_threshold_period - $row[0];
+	}
+	return 0;
+}
 
 function WGWShowSignupForm($error_msg)
 {
@@ -125,6 +144,12 @@ function WGWProcessSignup()
 	}
 	if (!WGWConfig::$signup_allowed) {
 		WGWOutput::$out->write("New user registrations are currently not available.");
+		die(0);
+	}
+	$next_signup = WGWIsThrottleBlocked();
+	if ($next_signup > 0) {
+		$next_signup_min = ceil($next_signup / 60);
+		WGWOutput::$out->write("Too many recent registrations. Please try again in $next_signup_min minutes.");
 		die(0);
 	}
 	$msg = "";

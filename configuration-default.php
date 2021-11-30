@@ -40,6 +40,10 @@ class WGWConfig
 	public static $signup_admin_verify_required = false;
 	// Limit the number of accounts per IP address. Set to zero to allow unlimited accounts.
 	public static $signup_accounts_per_ip = 1;
+	// Signup threshold max accounts per time period
+	public static $signup_threshold_accounts = 0;
+	// Signup threshold time period in seconds
+	public static $signup_threshold_period = 0;
 	
 	// Should we use reCaptcha (v2) for signups
 	public static $recaptcha_enabled = false;
