@@ -32,6 +32,16 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		WGWOutput::$out->write("The specified world does not exist or access is denied.<br>");
 		die(0);
 	}
+	$deleted = false;
+	if ($charname[0] == ' ') {
+		if (WGWUser::$user->is_admin()) {
+			$deleted = true;
+		}
+		else {
+			WGWOutput::$out->write("There is no character named $char_esc on this server.<br>");
+			die(0);
+		}
+	}
 	$result = WGWQueryCharactersBy("charname = '$char_sql'", $worldid);
 	if ((!$result) or ($result->num_rows == 0)) {
 		WGWOutput::$out->write("There is no character named $char_esc on this server.<br>");
@@ -45,6 +55,9 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	$is_anon = $nameflags & 0x1000 ? true : false;
 	$full_info = ($characcount == WGWUser::$user->id or WGWUser::$user->is_admin());
 	WGWOutput::$out->write("<p>Server: " . WGWDB::$maps[$worldid]["name"] . "</p>");
+	if ($deleted) {
+		WGWOutput::$out->write("<p><b>Deleted</b></p>");
+	}
 	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM accounts_sessions WHERE charid=$charid");
 	$isonline = $result->num_rows ? true : false;
 	$clear_out = "";

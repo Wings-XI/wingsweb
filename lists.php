@@ -13,6 +13,7 @@ require_once("database.php");
 require_once("zones.php");
 require_once("jobs.php");
 require_once("obfusutils.php");
+require_once("user.php");
 
  
 /**
@@ -47,7 +48,19 @@ function WGWDisplayCharacterList($cursor, $withanon = false, $worldid=100)
 		<td style=\"width: 150px\"><b>Job</b></td>
 		<td><b>Zone</b></td>
 		</tr>";
+	$is_admin = WGWUser::$user->is_admin();
 	while ($row = $cursor->fetch_assoc()) {
+		$tag_enter = "";
+		$tag_end = "";
+		if ($row["charname"][0] == ' ') {
+			// Characters that begin with a space are deleted and will only
+			// be shown to administrator
+			if (!$is_admin) {
+				continue;
+			}
+			$tag_enter = "<i>";
+			$tag_end = "</i>";
+		}
 		$charname_esc = htmlspecialchars($row["charname"]);
 		$charname_url = urlencode($row["charname"]);
 		if ($row["nameflags"] & 0x1000 and !$withanon) {
@@ -57,7 +70,7 @@ function WGWDisplayCharacterList($cursor, $withanon = false, $worldid=100)
 		else {
 			$job_str = WGWGetFullJobString($row["mjob"],$row["mlvl"], $row["sjob"], $row["slvl"]);
 		}
-		$clear_out .= "<tr class=\"character\"><td><a href=\"$g_base?page=character&worldid=$worldid&name=$charname_url\">$charname_esc</a></td>
+		$clear_out .= "<tr class=\"character\"><td>$tag_enter<a href=\"$g_base?page=character&worldid=$worldid&name=$charname_url\">$charname_esc</a>$tag_end</td>
 		
 			<td>$job_str</td>
 			<td>" . WGWGetZoneName($row["pos_zone"]) . "</td>";
