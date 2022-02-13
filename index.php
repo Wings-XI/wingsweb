@@ -129,6 +129,10 @@ switch ($page) {
 		require_once("countries.php");
 		DoCountryStats();
 		break;
+	case "testmail":
+		require_once("email.php");
+		WGWDoEmailTest();
+		break;
 	default:
 		$not_found = true;
 }
