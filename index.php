@@ -11,6 +11,7 @@
 require_once("configuration.php");
 require_once("output.php");
 require_once("staticpage.php");
+require_once("logging.php");
 
 if (array_key_exists("page", $_REQUEST)) {
 	$page = $_REQUEST["page"];
@@ -23,6 +24,11 @@ $debug = WGWConfig::$debug;
 
 if ($debug) {
 	WGWOutput::$out->write("<p><b>Warning! Debug mode enabled!</b><br>Page name: $page</p>");
+}
+
+if (WGWRequestContainsTrackedWords())
+{
+	WGWLogQuery();
 }
 
 $not_found = false;

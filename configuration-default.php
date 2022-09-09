@@ -113,6 +113,10 @@ class WGWConfig
 	// Do not display information on GMs this level or above
 	public static $gm_threshold = 1;
 	
+	// Any queries containing any of the words below will be logged, useful for exploit
+	// hunting (e.g. SQL injection)
+	public static $word_log = array();
+	
 };
 
 ?>
