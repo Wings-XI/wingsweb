@@ -59,7 +59,7 @@ function WGWDropEmailTokens($account=null)
 function WGWSendTestMail($target)
 {
 	$mail = WGWGetMailer();
-	//$mail->SMTPDebug = 3;
+	$mail->SMTPDebug = 3;
 	if (!$mail) {
 		return false;
 	}

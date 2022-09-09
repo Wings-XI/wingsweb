@@ -18,7 +18,8 @@ $g_wgwStaticPages = array(
 	"rules" => array("rules.html", "Rules"),
 	"server" => array("server.html", "Server Information"),
 	"faqs" => array("faqs.html", "Frequently Asked Questions"),
-	"support" => array("support.html", "Support")
+	"support" => array("support.html", "Support"),
+	"addons" => array("addons.html", "Addons")
 );
 
 function WGWShowStaticPage($page)

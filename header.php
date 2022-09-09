@@ -18,16 +18,15 @@ $g_wgwHeaderBefore = <<<EOS
 <!DOCTYPE html>
 <html>
   <head>
-	<link rel="stylesheet" href="site.css">
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" href="">
     <title>Wings%TITLE%</title>
   </head>
   <body bgcolor=#cccccc>
     <table style="width: 100%;" border="0">
       <tbody>
         <tr>
-          <td rowspan="1" colspan="2" style="background-color: #cccccc; padding: 10px;"><b
-              style="font-size: 72px;">Wings - FFXI WotG private server</b><!--<span style="background-color: red; color: white; vertical-align: 230%; font-size: 14px; font-weight: bold;">BETA</span>-->
+          <td rowspan="1" colspan="2" style="background-color: #cccccc; padding: 0px;"><b
+              style="font-size: 72px;"><img src="WingsXI.png"></b><!--<span style="background-color: red; color: white; vertical-align: 230%; font-size: 14px; font-weight: bold;">BETA</span>-->
             <br>
           </td>
         </tr>
@@ -50,6 +49,7 @@ $g_wgwMenu = <<<EOS
 			<a href="$g_base?page=server">Server Information</a><br>
             <a href="$g_base?page=play">How to connect</a><br>
 			<a href="$g_base?page=faqs">FAQs</a><br>
+			<a href="$g_base?page=addons">Supported Ashita Addons and Plugins</a><br>
 			<a href="$g_base?page=support">Support</a><br>
 			
 			<br><b>Tools</b><br>
@@ -59,9 +59,9 @@ $g_wgwMenu = <<<EOS
 			<a href="$g_base?page=itemsearch">Item Search</a><br>
 
 			<br><b>Community</b><br>
-			<a href="/forum/">Forums</a><br>
 			<!-- Old discord now archived <a href="https://discord.gg/StXNpgXZtV">Discord</a><br> -->
-			<a href="https://discord.gg/wNpVm35wbz">Join our Discord</a>
+			<a href="https://discord.gg/wNpVm35wbz">Our Discord</a><br>
+			<a href="https://gitlab.com/ffxiwings/wings">Our Source Code</a>
 EOS;
 
 global $g_wgwLoggedInMenu;
@@ -84,7 +84,9 @@ $g_wgwFooter = <<<EOS
         </tr>
       </tbody>
     </table>
-    <p style="font-size: x-small;">©2020-2021 WingsXI project, all rights reserved.</p>
+<footer>
+      <p style="text-align:center" class="copyright">Website by Twilight and Gweivyth, &copy; 2019-<script>document.write(new Date().getFullYear())</script></p>
+</footer>
   </body>
 </html>
 EOS;

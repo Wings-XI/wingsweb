@@ -109,7 +109,9 @@ function WGWForceLogin()
 	}
 	if (!WGWUser::$user->status) {
 		WGWOutput::$out->title = "Login";
-		WGWOutput::$out->write("The account must be activated before accessing this page.<br><a href=\"$g_base?page=resend\">Resend activation mail</a><br>");
+		WGWOutput::$out->write("The account must be activated before accessing this page.
+								<br><a href=\"$g_base?page=resend\">Resend activation mail</a>
+								<br>If you do not receive an activation email, please join the Wings discord and submit a GM ticket including your account name and email to have your account manually verified.</br>");
 		die(0);
 	}
 }

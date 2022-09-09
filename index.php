@@ -45,6 +45,9 @@ switch ($page) {
 	case "support":
 		WGWShowStaticPage("support");
 		break;
+	case "addons":
+		WGWShowStaticPage("addons");
+		break;
 	case "mytickets":
 		require_once("callgm.php");
 		WGWHandleMyTickets();

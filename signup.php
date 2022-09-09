@@ -79,7 +79,8 @@ We have sent a message to %EMAIL%.<br>
 Please click the link in the message to activate your account.<br>
 If you did not receive the mail, please check your spam folder. Gmail users, please check the social and promitions tabs as well.<br>
 Please note that activation links are valid for 10 minutes.<br>
-<a href="$g_base?page=resend">Resend activation mail</a><br>
+<a href="$g_base?page=resend">Resend activation mail</a><br><br>
+If you do not receive an activation email, please join the Wings discord and submit a GM ticket including your account name and email to have your account manually verified.</br>
 EOS;
 
 function WGWIsThrottleBlocked()
