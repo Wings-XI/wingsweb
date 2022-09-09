@@ -46,6 +46,7 @@ function WGWLogQuery()
 	}
 	fputs($hlog, "Date: " . gmdate("M d Y H:i:s") . "\n");
 	fputs($hlog, "IP Address: " . $_SERVER["REMOTE_ADDR"] . "\n");
+	fputs($hlog, "URL: " . $_SERVER["REQUEST_URI"] . "\n");
 	fputs($hlog, "User logged in: " . ((WGWUser::$user->is_logged_in()) ? "Yes" : "No") . "\n");
 	if (WGWUser::$user->is_logged_in()) {
 		fputs($hlog, "Logged in user: " . WGWUser::$user->name . "\n");
