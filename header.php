@@ -26,7 +26,7 @@ $g_wgwHeaderBefore = <<<EOS
       <tbody>
         <tr>
           <td rowspan="1" colspan="2" style="background-color: #cccccc; padding: 0px;"><b
-              style="font-size: 72px;"><img src="WingsXI.png"></b><!--<span style="background-color: red; color: white; vertical-align: 230%; font-size: 14px; font-weight: bold;">BETA</span>-->
+              style="font-size: 72px;"><a href="$g_base"><img src="WingsXI.png" style="border: 0"></a></b><!--<span style="background-color: red; color: white; vertical-align: 230%; font-size: 14px; font-weight: bold;">BETA</span>-->
             <br>
           </td>
         </tr>
