@@ -174,7 +174,8 @@ function WGWShowItemInfoById($itemid, $worldid=100)
 			ON chars.charid = char_inventory.charid
 			LEFT JOIN accounts_sessions
 			ON chars.charid = accounts_sessions.charid
-			WHERE itemId=$itemid AND bazaar != 0 ORDER BY charname
+			WHERE itemId=$itemid AND bazaar != 0 AND (accounts_sessions.charid IS NOT NULL OR NOW() - INTERVAL 1 MONTH < lastupdate)
+			ORDER BY charname
 		");
 		$result_count = $result->num_rows;
 	}
