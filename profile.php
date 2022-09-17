@@ -125,7 +125,8 @@ function WGWShowMainProfilePage()
 	if (WGWUser::$user->id == $accid) {
 		// TODO: Support admin change, currently too tied to the current user
 		WGWOutput::$out->write("<a href=\"$g_base?page=changemail\">Change E-mail</a><br>");
-		WGWOutput::$out->write("<a href=\"$g_base?page=changepassword\">Change Password</a><br><br>");
+		WGWOutput::$out->write("<a href=\"$g_base?page=changepassword\">Change Password</a><br>");
+		WGWOutput::$out->write("<a href=\"$g_base?page=lanparty\">Enable temporary IP exception (LAN party mode)</a><br><br>");
 	}
 	WGWOutput::$out->write("<h3>My Characters:</h3>");
 	$num_chars = 0;

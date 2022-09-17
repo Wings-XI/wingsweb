@@ -117,6 +117,13 @@ class WGWConfig
 	// hunting (e.g. SQL injection)
 	public static $word_log = array();
 	
+	// Length of temporary IP exception granted when LAN party mode is enabled
+	// Default - 3 days
+	public static $temp_ip_exception_length = 259200;
+	// Cooldown between uses of LAN party mode
+	// Default - 30 days
+	public static $temp_ip_exception_cooldown = 2592000;
+	
 };
 
 ?>

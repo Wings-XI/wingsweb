@@ -134,6 +134,10 @@ switch ($page) {
 		require_once("changerace.php");
 		WGWRaceChange();
 		break;
+	case "lanparty":
+		require_once("lanparty.php");
+		WGWShowLANPartyModeForm();
+		break;
 	case "countries":
 		require_once("countries.php");
 		DoCountryStats();
