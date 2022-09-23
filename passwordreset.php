@@ -228,6 +228,7 @@ function WGWProcessDoPasswordReset()
 			}
 			$result = WGWUser::$user->changepassword(null, $_REQUEST["pass"], $_REQUEST["verify"], $id, true);
 			if ($result === true) {
+				WGWUser::$user->disablemfa($id);
 				WGWDropEmailTokens($id);
 				WGWOutput::$out->write("Your password has been successfully reset!<br>");
 				die(0);

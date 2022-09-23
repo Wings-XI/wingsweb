@@ -267,17 +267,35 @@ class WGWUser
 		return $success;
 	}
 	
-	public function disablemfa()
+	public function disablemfa($id = null)
 	{
-		if (!$this->id) {
+		if (!$id) {
+			if (!$this->id) {
+				return false;
+			}
+			$id = $this->id;
+		}
+		require_once("database.php");
+		$result = WGWDB::$con->query("SELECT features FROM " . WGWConfig::$db_prefix . "accounts WHERE id=$id LIMIT 1");
+		if (!$result || $result->num_rows == 0) {
 			return false;
 		}
-		$this->features = ($this->features & (~0x01));
-		require_once("database.php");
-		$result = WGWDB::$con->query("UPDATE " . WGWConfig::$db_prefix . "accounts SET features = $this->features, otp_secret = NULL WHERE id=$this->id");
-		if ($this->features & 0x01) {
-			// Somehow it's still enabled
-			return false;
+		$row = $result->fetch_row();
+		$features = $row[0];
+		$features = ($features & (~0x01));
+		$result = WGWDB::$con->query("UPDATE " . WGWConfig::$db_prefix . "accounts SET features = $features, otp_secret = NULL WHERE id=$id");
+		if ($id == $this->id) {
+			// Disabled for current user so reload features
+			$result = WGWDB::$con->query("SELECT features FROM " . WGWConfig::$db_prefix . "accounts WHERE id=$id LIMIT 1");
+			if (!$result || $result->num_rows == 0) {
+				return false;
+			}
+			$row = $result->fetch_row();
+			$features = $row[0];
+			if ($features & 0x01) {
+				return false;
+			}
+			$this->features = $features;
 		}
 		return true;
 	}
