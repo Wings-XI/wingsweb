@@ -3,7 +3,7 @@
 /**
  *	@file profile.php
  *	Account management
- *	(C) 2020 Twilight
+ *	(C) 2020-2022 Twilight
  *	This software is available under AGPLv3 license.
  *	Source code of modified versions must be disclosed.
  */

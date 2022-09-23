@@ -3,7 +3,7 @@
 /**
  *	@file login.php
  *	Handles the login page and submitted form
- *	(C) 2020-2021 Twilight
+ *	(C) 2020-2022 Twilight
  *	This software is available under AGPLv3 license.
  *	Source code of modified versions must be disclosed.
  */
