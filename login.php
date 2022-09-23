@@ -13,6 +13,8 @@ require_once("user.php");
 require_once("staticpage.php");
 
 global $g_wgwLoginPage;
+global $g_wgwOTPPage;
+
 $g_wgwLoginPage = <<<EOS
 	<center>
 		<form method="POST">
@@ -41,6 +43,32 @@ $g_wgwLoginPage = <<<EOS
 	</center>
 EOS;
 
+$g_wgwOTPPage = <<<EOS
+	<center>
+		<form method="POST">
+			<input type="hidden" name="page" value="login">
+			This account is secured with two-factor authentication.<br>
+			Please enter the one time code shown in the authenticaor app.<br>
+			<table border="0">
+				<tbody>
+					<tr>
+						<td>One time code: </td>
+						<td><input type="text" name="otp" size="30"></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><center><input type="submit" value="Login"></center></td>
+					</tr>
+					<tr>
+						<td><br><br>&nbsp;</td>
+						<td><center><a href="$g_base?page=logout">Change user</a></center></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</center>
+EOS;
+
 function WGWShowLoginForm($msg = null)
 {
 	global $g_wgwLoginPage;
@@ -55,15 +83,51 @@ function WGWShowLoginForm($msg = null)
 	die(0);
 }
 
+function WGWShowOTPForm($msg = null)
+{
+	global $g_wgwOTPPage;
+	if (WGWUser::$user->is_logged_in()) {
+		WGWUser::$user->logout();
+	}
+	WGWOutput::$out->title = "Two Factor Authentication";
+	WGWOutput::$out->write($g_wgwOTPPage);
+	if ($msg) {
+		WGWOutput::$out->write("<br><center><b style=\"color: red\">$msg</b></center>");
+	}
+	die(0);
+}
+
 function WGWProcessLogin()
 {
 	global $g_base;
 	
 	$success = false;
 	if (!WGWUser::$user->is_logged_in()) {
-		if ((array_key_exists("user", $_REQUEST)) and (array_key_exists("pass", $_REQUEST))) {
+		if (WGWUser::$user->mfaid > 0) {
+			// Actually logged in but needs to go through MFA
+			if (WGWUser::$user->otp_secret == null) {
+				// Should never happen
+				WGWShowLoginForm("Two factor authentication intenal error");
+			}
+			else if (array_key_exists("otp", $_REQUEST)) {
+				$success = WGWUser::$user->domfa($_REQUEST["otp"]);
+				if (!$success) {
+					WGWShowOTPForm("Incorrect one time code");
+				}
+			}
+			else {
+				// Still need to enter the OTP
+				WGWShowOTPForm();
+			}
+		}
+		else if ((array_key_exists("user", $_REQUEST)) and (array_key_exists("pass", $_REQUEST))) {
 			if (WGWUser::$user->login($_REQUEST["user"], $_REQUEST["pass"])) {
 				$success = true;
+			}
+			else if (WGWUser::$user->mfaid > 0) {
+				// Recursive call will hit previous check, yielding
+				// the OTP request page
+				WGWProcessLogin();
 			}
 			else {
 				WGWShowLoginForm("Unknown username or bad password");
@@ -90,6 +154,10 @@ function WGWProcessLogout()
 {
 	if (WGWUser::$user->is_logged_in()) {
 		WGWUser::$user->logout();
+	}
+	else if (WGWUser::$user->mfaid > 0) {
+		WGWUser::$user->mfaid = 0;
+		WGWUser::$user->otp_secret = null;
 	}
 	WGWShowLoginForm();
 }

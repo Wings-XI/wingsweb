@@ -3,10 +3,13 @@
 /**
  *	@file index.php
  *	Main program, this is the only URL which the user should access directly.
- *	(C) 2020-2021 Twilight
+ *	(C) 2020-2022 Twilight
  *	This software is available under AGPLv3 license.
  *	Source code of modified versions must be disclosed.
  */
+ 
+// Assume stuff loaded by composer
+require_once("vendor/autoload.php");
  
 require_once("configuration.php");
 require_once("output.php");

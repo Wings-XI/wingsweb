@@ -19,6 +19,8 @@ class WGWUser
 	public $name = "";
 	public $id = -1;
 	public $email = "";
+	public $mfaid = -1;
+	public $otp_secret = null;
 	
 	// Bitmask of installed expansions
 	public $expansions = 0;
@@ -184,13 +186,13 @@ class WGWUser
 		$user_escaped = WGWDB::$con->real_escape_string($user);
 		$pass_escaped = WGWDB::$con->real_escape_string($pass);
 		$secret_escaped = WGWDB::$con->real_escape_string(WGWConfig::$hash_secret);
-		$sql = "SELECT id, password, salt, email, expansions, features, status, privileges FROM " . WGWConfig::$db_prefix . "accounts WHERE username='$user_escaped' LIMIT 1";
+		$sql = "SELECT id, password, salt, email, expansions, features, status, privileges, otp_secret FROM " . WGWConfig::$db_prefix . "accounts WHERE username='$user_escaped' LIMIT 1";
 		$result = WGWDB::$con->query($sql);
 		$real_hash = "0000000000000000000000000000000000000000000000000000000000000000";
 		$salt = "00000000000000000000000000000000";
 		$user_exists = false;
 		$row = null;
-		if ($result->num_rows != 0) {
+		if (!$result || $result->num_rows != 0) {
 			$row = $result->fetch_row();
 			$real_hash = $row[1];
 			$salt = $row[2];
@@ -206,6 +208,12 @@ class WGWUser
 				$this->log_access($user_exists ? $row[0] : 0, null, 1, false);
 				return false;
 			}
+		}
+		$secured = ((intval($row[5]) & 0x01) ? true : false);
+		if ($secured) {
+			$this->mfaid = $row[0];
+			$this->otp_secret = $row[8];
+			return false;
 		}
 		$this->name = $user;
 		$this->id = $row[0];
@@ -228,8 +236,8 @@ class WGWUser
 			return false;
 		}
 		require_once("database.php");
-		$result = WGWDB::$con->query("SELECT expansions, features, status, privileges, email FROM " . WGWConfig::$db_prefix . "accounts WHERE id=$this->id LIMIT 1");
-		if ($result->num_rows == 0) {
+		$result = WGWDB::$con->query("SELECT expansions, features, status, privileges, email, username FROM " . WGWConfig::$db_prefix . "accounts WHERE id=$this->id LIMIT 1");
+		if (!$result || $result->num_rows == 0) {
 			return false;
 		}
 		$row = $result->fetch_row();
@@ -238,9 +246,39 @@ class WGWUser
 		$this->status = $row[2];
 		$this->priv = $row[3];
 		$this->email = $row[4];
+		$this->name = $row[5];
 		$this->lastrefresh = time();
 		$this->update_gm_msg_count();
 		$this->update_pending_ticket_count();
+		return true;
+	}
+	
+	public function domfa($code)
+	{
+		if (($this->mfaid <= 0) || ($this->otp_secret == null)) {
+			return false;
+		}
+		$tfa = new RobThree\Auth\TwoFactorAuth('Wings');
+		$success = $tfa->verifyCode($this->otp_secret, $code);
+		if ($success) {
+			$this->id = $this->mfaid;
+			$this->refresh();
+		}
+		return $success;
+	}
+	
+	public function disablemfa()
+	{
+		if (!$this->id) {
+			return false;
+		}
+		$this->features = ($this->features & (~0x01));
+		require_once("database.php");
+		$result = WGWDB::$con->query("UPDATE " . WGWConfig::$db_prefix . "accounts SET features = $this->features, otp_secret = NULL WHERE id=$this->id");
+		if ($this->features & 0x01) {
+			// Somehow it's still enabled
+			return false;
+		}
 		return true;
 	}
 	
@@ -254,6 +292,8 @@ class WGWUser
 		$this->priv = 0;
 		$this->expansions = 0;
 		$this->features = 0;
+		$this->mfaid = 0;
+		$this->otp_secret = null;
 		$this->unread_gm_messages = 0;
 		$this->gm_pending_tickets = 0;
 	}
