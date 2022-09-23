@@ -124,6 +124,12 @@ class WGWConfig
 	// Default - 30 days
 	public static $temp_ip_exception_cooldown = 2592000;
 	
+	// Multi factor authentication support
+	public static $enable_mfa = true;
+	// Cooldown after disabling MFA before it can be enabled again
+	// Default - 7 days
+	public static $mfa_cooldown = 604800;
+	
 };
 
 ?>

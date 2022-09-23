@@ -3,7 +3,7 @@
 /**
  *	@file user.php
  *	Internal functions for user login and registration
- *	(C) 2020-2021 Twilight
+ *	(C) 2020-2022 Twilight
  *	This software is available under AGPLv3 license.
  *	Source code of modified versions must be disclosed.
  */
@@ -21,6 +21,7 @@ class WGWUser
 	public $email = "";
 	public $mfaid = -1;
 	public $otp_secret = null;
+	public $otp_change = null;
 	
 	// Bitmask of installed expansions
 	public $expansions = 0;
@@ -186,7 +187,7 @@ class WGWUser
 		$user_escaped = WGWDB::$con->real_escape_string($user);
 		$pass_escaped = WGWDB::$con->real_escape_string($pass);
 		$secret_escaped = WGWDB::$con->real_escape_string(WGWConfig::$hash_secret);
-		$sql = "SELECT id, password, salt, email, expansions, features, status, privileges, otp_secret FROM " . WGWConfig::$db_prefix . "accounts WHERE username='$user_escaped' LIMIT 1";
+		$sql = "SELECT id, password, salt, email, expansions, features, status, privileges, otp_secret, otp_change FROM " . WGWConfig::$db_prefix . "accounts WHERE username='$user_escaped' LIMIT 1";
 		$result = WGWDB::$con->query($sql);
 		$real_hash = "0000000000000000000000000000000000000000000000000000000000000000";
 		$salt = "00000000000000000000000000000000";
@@ -210,10 +211,24 @@ class WGWUser
 			}
 		}
 		$secured = ((intval($row[5]) & 0x01) ? true : false);
+		if ($row[8]) {
+			$this->otp_secret = $row[8];
+		}
+		else {
+			$this->otp_secret = null;
+		}
+		if ($row[9]) {
+			$this->otp_change = strtotime($row[9]);
+		}
+		else {
+			$this->otp_change = null;
+		}
 		if ($secured) {
 			$this->mfaid = $row[0];
-			$this->otp_secret = $row[8];
 			return false;
+		}
+		else {
+			$this->mfaid = 0;
 		}
 		$this->name = $user;
 		$this->id = $row[0];
@@ -283,7 +298,7 @@ class WGWUser
 		$row = $result->fetch_row();
 		$features = $row[0];
 		$features = ($features & (~0x01));
-		$result = WGWDB::$con->query("UPDATE " . WGWConfig::$db_prefix . "accounts SET features = $features, otp_secret = NULL WHERE id=$id");
+		$result = WGWDB::$con->query("UPDATE " . WGWConfig::$db_prefix . "accounts SET features = $features, otp_secret = NULL, otp_change = UTC_TIMESTAMP() WHERE id=$id");
 		if ($id == $this->id) {
 			// Disabled for current user so reload features
 			$result = WGWDB::$con->query("SELECT features FROM " . WGWConfig::$db_prefix . "accounts WHERE id=$id LIMIT 1");
@@ -297,6 +312,38 @@ class WGWUser
 			}
 			$this->features = $features;
 		}
+		return true;
+	}
+	
+	public function enablemfa($code)
+	{
+		$now = time();
+		if (WGWConfig::$mfa_cooldown && WGWUser::$user->otp_change && WGWUser::$user->otp_change + WGWConfig::$mfa_cooldown >= $now) {
+			// Doube check cooldown to avoid URL hacking
+			return "You cannot enable two factor authentication at this time";
+		}
+		if (!WGWUser::$user->otp_secret) {
+			// Should never happen
+			return "An internal error has occurred (no otp secret stored)";
+		}
+		$tfa = new RobThree\Auth\TwoFactorAuth('Wings');
+		if (!$tfa->verifyCode($this->otp_secret, $code)) {
+			return "The one time code entered is incorrect";
+		}
+		$features = $this->features | 0x01;
+		$id = $this->id;
+		$sql = "UPDATE " . WGWConfig::$db_prefix . "accounts SET features = $features, otp_secret = \"" . WGWUser::$user->otp_secret . "\", otp_change = UTC_TIMESTAMP() WHERE id=$id";
+		WGWDB::$con->query($sql);
+		$result = WGWDB::$con->query("SELECT features FROM " . WGWConfig::$db_prefix . "accounts WHERE id=$id LIMIT 1");
+		if (!$result || $result->num_rows == 0) {
+			return "An internal error has occurred (account not found)";
+		}
+		$row = $result->fetch_row();
+		$features = $row[0];
+		if (($features & 0x01) == 0) {
+			return "An internal error has occurred (not enabled)";;
+		}
+		$this->features = $features;
 		return true;
 	}
 	

@@ -141,6 +141,10 @@ switch ($page) {
 		require_once("lanparty.php");
 		WGWShowLANPartyModeForm();
 		break;
+	case "mfa":
+		require_once("mfa.php");
+		WGWShowMFAForm();
+		break;
 	case "countries":
 		require_once("countries.php");
 		DoCountryStats();
