@@ -14,6 +14,7 @@ require_once("staticpage.php");
 
 global $g_wgwLoginPage;
 global $g_wgwOTPPage;
+global $g_base;
 
 $g_wgwLoginPage = <<<EOS
 	<center>

@@ -297,6 +297,10 @@ class WGWUser
 		}
 		$row = $result->fetch_row();
 		$features = $row[0];
+		if (($features & 0x01) == 0) {
+			// Already disabled so nothing to do
+			return true;
+		}
 		$features = ($features & (~0x01));
 		$result = WGWDB::$con->query("UPDATE " . WGWConfig::$db_prefix . "accounts SET features = $features, otp_secret = NULL, otp_change = UTC_TIMESTAMP() WHERE id=$id");
 		if ($id == $this->id) {
