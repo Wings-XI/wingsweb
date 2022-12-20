@@ -60,7 +60,7 @@ $g_wgwMenu = <<<EOS
 
 			<br><b>Community</b><br>
 			<!-- Old discord now archived <a href="https://discord.gg/StXNpgXZtV">Discord</a><br> -->
-			<a href="https://discord.gg/wNpVm35wbz">Our Discord</a><br>
+			<a href="https://discord.gg/wingsxi">Our Discord</a><br>
 			<a href="https://gitlab.com/ffxiwings/wings">Our Source Code</a>
 EOS;
 
