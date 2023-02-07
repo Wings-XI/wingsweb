@@ -30,7 +30,7 @@ function WGWPrintBattlefields($worldid=100)
 	}
 	$where = "bcnm_info.fastestTime > 1 and bcnm_info.fastestTime < bcnm_info.timeLimit";
 	$result = WGWQueryBattlefieldsBy($where, $worldid);
-	WGWOutput::$out->write("<p>$result->num_rows battlefields currently enabled.</p>");
+	WGWOutput::$out->write("<p>$result->num_rows battlefields with a time record.</p>");
 	WGWDisplayBattlefieldsList($result, false, $worldid);
 }
 
