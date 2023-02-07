@@ -25,7 +25,8 @@ $g_wgwHeaderBefore = <<<EOS
     <table style="width: 100%;" border="0">
       <tbody>
         <tr>
-          <td rowspan="1" colspan="2" style="background-color: #cccccc; padding: 0px;"><b
+          <td rowspan="1" colspan="2" style="background-color: #cccccc; padding: 0px;"><b
+
               style="font-size: 72px;"><a href="$g_base"><img src="WingsXI.png" style="border: 0"></a></b><!--<span style="background-color: red; color: white; vertical-align: 230%; font-size: 14px; font-weight: bold;">BETA</span>-->
             <br>
           </td>
@@ -60,7 +61,10 @@ $g_wgwMenu = <<<EOS
 
 			<br><b>Community</b><br>
 			<!-- Old discord now archived <a href="https://discord.gg/StXNpgXZtV">Discord</a><br> -->
-			<a href="https://discord.gg/wingsxi">Our Discord</a><br>
+			<!-- Link only works if we KEEP boost lvl 3 <a href="https://discord.gg/wingsxi">Our Discord</a><br> -->
+			<a href="https://wingsxi.com/wings/discord.php">Our Discord</a><br>
+			<!-- wangzthangz lives at a subpath on the same IIS install -->
+			<a href="/wangzthangz/index.php">Wangzthangz revival</a><br>
 			<a href="https://gitlab.com/ffxiwings/wings">Our Source Code</a>
 EOS;
 
