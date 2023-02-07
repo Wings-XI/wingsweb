@@ -78,5 +78,80 @@ function WGWDisplayCharacterList($cursor, $withanon = false, $worldid=100)
 	$clear_out .= "</tr></tbody></table>";
 	WGWOutput::$out->write(WGWGetSelfDecodigStr($clear_out));
 }
+
+
+/**
+ *	Query battlefield list from the DB
+ *	$where - WHERE clause for SQL statement
+ */
+function WGWQueryBattlefieldsBy($where, $worldid=100, $debug=false)
+{
+	$query = "SELECT bcnm_info.bcnmid AS id, zoneId, name,
+		fastestName, fastestPartySize, round(fastestTime / 60, 0) as fastest,
+		previousName, previousPartySize, round(previousTime / 60, 0) as previous,
+		round(timeLimit / 60, 0) as time, levelCap, partySize, isMission
+		FROM bcnm_info
+		WHERE $where
+		ORDER BY zoneId, isMission, name";
+	if ($debug) {
+		WGWOutput::$out->write("<p>Query: $query</p>");
+	}
+	return $result = WGWDB::$maps[$worldid]["db"]->query($query);
+}
  
+/**
+ *	Displays a list of battlefields as a table
+ *	$cursor - Result WGWQueryBattlefieldsBy
+ */
+function WGWDisplayBattlefieldsList($cursor, $withanon = false, $worldid=100)
+{
+	global $g_base;
+	if (!$cursor) {
+		WGWOutput::$out->write("Database query error<br>");
+		return;
+	}
+	$clear_out = "<table border=\"0\"><tbody><tr>
+		<td><b>Name</b></td>
+		<td><b>Zone</b></td>
+		<td><b>Time</b></td>
+		<td><b># mem</b></td>
+		<td><b>lvl Cap</b></td>
+		<td><b>Mission?</b></td>
+		<td><b>Fastest</b></td>
+		<td><b>Second</b></td>
+		</tr>";
+	while ($row = $cursor->fetch_assoc()) {
+		$tag_enter = "";
+		$tag_end = "";
+		if ($row["isMission"] == 1) {
+			$isMission = "Yes";
+		}
+		else {
+			$isMission = "No";
+		}
+		$first = $row["fastestName"];
+		if ($row["fastestPartySize"] > 1) {
+			$first .= "and " . $row["fastestPartySize"] . " others";
+		}
+		$first .= " in " . $row["fastest"] . " mins";
+		$second = $row["previousName"];
+		if ($row["previousPartySize"] > 1) {
+			$second .= "and " . $row["previousPartySize"] . " others";
+		}
+		$second .= " in " . $row["previous"] . " mins";
+		$charname_esc = ucfirst(str_replace("_", " ", $row["name"]));
+		$charname_url = urlencode($row["name"]);
+		$clear_out .= "<tr class=\"character\"><td>$tag_enter<a href=\"/wangzthangz/bcnm.php?name=$charname_url\">$charname_esc</a>$tag_end</td>
+			<td>" . WGWGetZoneName($row["zoneId"]) . "</td>
+			<td>" . $row["time"] . "</td>
+			<td>" . $row["partySize"] . "</td>
+			<td>" . $row["levelCap"] . "</td>
+			<td>" . $isMission . "</td>
+			<td>" . $first . "</td>
+			<td>" . $second . "</td>";
+	}
+	$clear_out .= "</tr></tbody></table>";
+	WGWOutput::$out->write(WGWGetSelfDecodigStr($clear_out));
+}
+
 ?>

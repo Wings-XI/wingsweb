@@ -58,6 +58,7 @@ $g_wgwMenu = <<<EOS
 			<a href="$g_base?page=onlinementors">Mentors</a><br>
 			<a href="$g_base?page=playersearch">Player Search</a><br>
 			<a href="$g_base?page=itemsearch">Item Search</a><br>
+			<a href="$g_base?page=battlefields">Battlefield Records</a><br>
 
 			<br><b>Community</b><br>
 			<!-- Old discord now archived <a href="https://discord.gg/StXNpgXZtV">Discord</a><br> -->

@@ -129,6 +129,10 @@ switch ($page) {
 		require_once("itemsearch.php");
 		WGWProcessItemSearch();
 		break;
+	case "battlefields":
+		require_once("battlefields.php");
+		WGWShowBattlefields();
+		break;
 	case "migrate":
 		require_once("migrate.php");
 		WGWDoMigration();
