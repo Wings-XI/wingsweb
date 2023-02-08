@@ -35,7 +35,7 @@ $g_WGWRaceChangeOnceWarn = <<<EOS
 
 function ConfirmRaceChange()
 {
-	return confirm("Once done, the change is permanent and cannot be changed again or reverted.\\nAre you sure you wish to continue?");
+	return confirm("Once done, you have 30 minutes to try again. After that, you must pay gil to change again.\\nAre you sure you wish to continue?");
 }
 </script>
 
@@ -43,6 +43,21 @@ EOS;
 
 function WGWSetRaceLook($charid, $worldid, $newdata)
 {
+	$result = WGWRaceChangeAvailabile($worldid, $charid);
+	$already_changed = false;
+	if (!$result) {
+		WGWOutput::$out->write("Change permission query failed.<br>");
+		die(0);
+	}
+	if ($result->num_rows != 0) {
+		$change_perms = $result->fetch_assoc();
+		if ($change_perms["value"] != 0) {
+			$already_changed = true;
+		}
+	}
+	if ($already_changed) {
+		return "Race change unavailable. You have already changed your race more than 30 minutes ago.";
+	}
 	if (!is_array($newdata)) {
 		return "No data to set.";
 	}
@@ -61,9 +76,9 @@ function WGWSetRaceLook($charid, $worldid, $newdata)
 		return "Invalid size value.";
 	}
 	$size = $newdata["size"];
-	// Set the character var that indicates that the name has already been changed.
+	// Track the timestamp of when race is changed only if not within 30 minutes of last change (don't allow changing every 30minutes forever)
 	// Whether this is actually checked or not is part of the form logic.
-	WGWDB::$maps[$worldid]["db"]->query("INSERT INTO char_vars (charid, varname, value) VALUES ($charid, \"RACE_CHANGED\", 1)");
+	WGWDB::$maps[$worldid]["db"]->query("INSERT INTO char_vars (charid, varname, value) VALUES ($charid, 'RACE_CHANGED', UNIX_TIMESTAMP()) ON DUPLICATE KEY UPDATE value=if((UNIX_TIMESTAMP() - value) > 30 * 60, UNIX_TIMESTAMP(), value)");
 	// Update in world DB
 	WGWDB::$maps[$worldid]["db"]->query("UPDATE char_look SET race = $race, face = $face, size = $size WHERE charid = $charid");
 	WGWDB::$maps[$worldid]["db"]->query("COMMIT");
@@ -134,8 +149,8 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 		$disable = "";
 	}
 	else if ($change_allowed == 1) {
-		// Allowed only once, test if already set
-		$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM char_vars WHERE charid=$charid AND varname=\"RACE_CHANGED\"");
+		// check if last race change was within 30 minutes or never used
+		$result = WGWRaceChangeAvailabile($worldid, $charid);
 		if (!$result) {
 			WGWOutput::$out->write("Change permission query failed.<br>");
 			die(0);
@@ -148,11 +163,11 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 			}
 		}
 		if ($already_changed) {
-			WGWOutput::$out->write("<p>You have already changed your race; cannot change again.</p>");
+			WGWOutput::$out->write("<p>You have already changed your race more than 30 minutes ago.</p>");
 		}
 		else {
 			if ($newdata == null) {
-				WGWOutput::$out->write("<p>You can only change your race once so choose wisely.</p>");
+				WGWOutput::$out->write("<p>If you make a mistake, you may come back and change again within 30 minutes.</p>");
 				$disable = "";
 			}
 			$change_go = true;
@@ -172,7 +187,7 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 			die(0);
 		}
 		$char_look = $result->fetch_assoc();
-		WGWOutput::$out->write("<p>Race successfully changed.</p>");
+		WGWOutput::$out->write("<p>Race successfully changed. Please log in to verify your selection. Within 30 minutes you can try again!</p>");
 	}
 	
 	$change_warn = "";
@@ -207,6 +222,11 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 	WGWOutput::$out->write("</tbody></table>\n");
 	WGWOutput::$out->write("<p><b>Do not change your race if you have any RSE pieces equipped!</b></p>\n");
 	WGWOutput::$out->write("<p><input type=\"submit\" value=\"Change\" $disable>&nbsp;&nbsp;<input type=\"reset\" value=\"Reset\" $disable></p></form>\n");
+}
+
+function WGWRaceChangeAvailabile($worldid, $charid)
+{
+	return $result = WGWDB::$maps[$worldid]["db"]->query("SELECT (UNIX_TIMESTAMP() - value) > 30 * 60 as value FROM char_vars WHERE charid=$charid AND varname='RACE_CHANGED'");
 }
 
 function WGWRaceChange()
