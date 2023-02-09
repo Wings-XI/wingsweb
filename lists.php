@@ -113,9 +113,9 @@ function WGWDisplayBattlefieldsList($cursor, $withanon = false, $worldid=100)
 	$clear_out = "<table border=\"0\"><tbody><tr>
 		<td><b>Name</b></td>
 		<td><b>Zone</b></td>
-		<td><b>Time</b></td>
+		<td><b>-----<br>Time</b></td>
 		<td><b>Max<br>Plyr</b></td>
-		<td><b>Max<br>Lvl</b></td>
+		<td><b>---<br>Lvl</b></td>
 		<td><b>Mission?</b></td>
 		<td><b>Fastest</b></td>
 		<td><b>Second</b></td>
