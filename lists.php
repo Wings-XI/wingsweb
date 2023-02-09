@@ -114,8 +114,8 @@ function WGWDisplayBattlefieldsList($cursor, $withanon = false, $worldid=100)
 		<td><b>Name</b></td>
 		<td><b>Zone</b></td>
 		<td><b>Time</b></td>
-		<td><b># mem</b></td>
-		<td><b>lvl Cap</b></td>
+		<td><b>Max<br>Plyr</b></td>
+		<td><b>Max<br>Lvl</b></td>
 		<td><b>Mission?</b></td>
 		<td><b>Fastest</b></td>
 		<td><b>Second</b></td>
@@ -130,15 +130,21 @@ function WGWDisplayBattlefieldsList($cursor, $withanon = false, $worldid=100)
 			$isMission = "No";
 		}
 		$first = $row["fastestName"];
+		if ($row["fastestPartySize"] == 1) {
+			$first .= "<br>in " . $row["fastest"] . " mins";
+		}
 		if ($row["fastestPartySize"] > 1) {
-			$first .= "and " . $row["fastestPartySize"] . " others";
+			$first .= " and " . $row["fastestPartySize"] . " others";
+			$first .= "<br>in " . $row["fastest"] . " mins";
 		}
-		$first .= " in " . $row["fastest"] . " mins";
 		$second = $row["previousName"];
-		if ($row["previousPartySize"] > 1) {
-			$second .= "and " . $row["previousPartySize"] . " others";
+		if ($row["previousPartySize"] == 1) {
+			$second .= "<br>in " . $row["fastest"] . " mins";
 		}
-		$second .= " in " . $row["previous"] . " mins";
+		if ($row["previousPartySize"] > 1) {
+			$second .= " and " . $row["previousPartySize"] . " others";
+			$second .= "<br>in " . $row["previous"] . " mins";
+		}
 		$charname_esc = ucfirst(str_replace("_", " ", $row["name"]));
 		$charname_url = urlencode($row["name"]);
 		$clear_out .= "<tr class=\"character\"><td>$tag_enter<a href=\"/wangzthangz/bcnm.php?name=$charname_url\">$charname_esc</a>$tag_end</td>
