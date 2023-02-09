@@ -139,7 +139,7 @@ function WGWDisplayBattlefieldsList($cursor, $withanon = false, $worldid=100)
 		}
 		$second = $row["previousName"];
 		if ($row["previousPartySize"] == 1) {
-			$second .= "<br>in " . $row["fastest"] . " mins";
+			$second .= "<br>in " . $row["previous"] . " mins";
 		}
 		if ($row["previousPartySize"] > 1) {
 			$second .= " and " . $row["previousPartySize"] . " others";
