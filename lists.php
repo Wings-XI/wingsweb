@@ -121,12 +121,14 @@ function WGWDisplayBattlefieldsList($cursor, $withanon = false, $worldid=100)
 		<td><b>Second</b></td>
 		</tr>";
 	while ($row = $cursor->fetch_assoc()) {
-		$tag_enter = "";
-		$tag_end = "";
+		$charname_esc = ucfirst(str_replace("_", " ", $row["name"]));
+		$charname_url = urlencode($row["name"]);
 		if ($row["isMission"] == 1) {
+			$nameString = "$charname_esc";
 			$isMission = "Yes";
 		}
 		else {
+			$nameString = "<a href=\"/wangzthangz/bcnm.php?name=$charname_url\">$charname_esc</a>";
 			$isMission = "No";
 		}
 		$first = $row["fastestName"];
@@ -145,9 +147,7 @@ function WGWDisplayBattlefieldsList($cursor, $withanon = false, $worldid=100)
 			$second .= " and " . $row["previousPartySize"] . " others";
 			$second .= "<br>in " . $row["previous"] . " mins";
 		}
-		$charname_esc = ucfirst(str_replace("_", " ", $row["name"]));
-		$charname_url = urlencode($row["name"]);
-		$clear_out .= "<tr class=\"character\"><td>$tag_enter<a href=\"/wangzthangz/bcnm.php?name=$charname_url\">$charname_esc</a>$tag_end</td>
+		$clear_out .= "<tr class=\"character\"><td>$nameString</td>
 			<td>" . WGWGetZoneName($row["zoneId"]) . "</td>
 			<td>" . $row["time"] . "</td>
 			<td>" . $row["partySize"] . "</td>
