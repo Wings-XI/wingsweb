@@ -63,7 +63,7 @@ $g_wgwMenu = <<<EOS
 			<br><b>Community</b><br>
 			<!-- Old discord now archived <a href="https://discord.gg/StXNpgXZtV">Discord</a><br> -->
 			<!-- Link only works if we KEEP boost lvl 3 <a href="https://discord.gg/wingsxi">Our Discord</a><br> -->
-			<a href="https://wingsxi.com/wings/discord.php">Our Discord</a><br>
+			<a href="/wings/discord.php">Our Discord</a><br>
 			<!-- wangzthangz lives at a subpath on the same IIS install -->
 			<a href="/wangzthangz/index.php">Wangzthangz revival</a><br>
 			<a href="https://gitlab.com/ffxiwings/wings">Our Source Code</a>
