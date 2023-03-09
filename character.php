@@ -139,7 +139,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	$clear_out .= "</tbody></table>";
 	$clear_out .= "</td><td style=\"width: 50%; vertical-align: top;\">";
 	if ($full_info) {
-		$clear_out .= "<h3>Crafts</h3><table border=\"0\" style=\"width: 35%;\"><tbody>";
+		$clear_out .= "<h3>Crafts</h3><table border=\"0\" style=\"width: 45%;\"><tbody>";
 		$skills = WGWGetSkillListForChar($charid, $worldid);
 		// Crafting skills are 48-57
 		global $g_wgwSkills;
