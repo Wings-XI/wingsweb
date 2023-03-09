@@ -144,8 +144,8 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		// Crafting skills are 48-57
 		global $g_wgwSkills;
 		$hascrafts = false;
-		for ($i = 48; $i <= 57; $i++) {
-			if (array_key_exists($i, $skills)) {
+		for ($i = 48; $i <= 59; $i++) {
+			if (array_key_exists($i, $skills) and $i != 58) {
 				$clear_out .= "<tr><td style=\"width: 10px;\">$g_wgwSkills[$i]</td><td style=\"text-align: right; width: 10px\">" . $skills[$i] / 10 . "</td></tr>";
 				$hascrafts = true;
 			}
