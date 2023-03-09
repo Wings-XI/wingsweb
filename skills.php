@@ -79,7 +79,7 @@ $g_wgwSkills = array(
 
 function WGWGetSkillListForChar($charid, $worldid=100)
 {
-	$query = "SELECT skillid, concat(trim(round(value / 10,1)) + 0, '<br>(rank ', rank, ')') FROM char_skills WHERE charid=$charid";
+	$query = "SELECT skillid, concat(trim(round(value / 10,1)) + 0, ' (rank ', rank, ')') FROM char_skills WHERE charid=$charid";
 	$result = WGWDB::$maps[$worldid]["db"]->query($query);
 	if ($result->num_rows == 0) {
 		// Must return an array by convention

@@ -146,7 +146,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		$hascrafts = false;
 		for ($i = 48; $i <= 59; $i++) {
 			if (array_key_exists($i, $skills) and $i != 58) {
-				$clear_out .= "<tr><td style=\"width: 10px;\">$g_wgwSkills[$i]</td><td style=\"text-align: right; width: 15px;\">" . $skills[$i] . "</td></tr>";
+				$clear_out .= "<tr><td style=\"width: 10px;\">$g_wgwSkills[$i]</td><td style=\"text-align: right; width: 30px;\">" . $skills[$i] . "</td></tr>";
 				$hascrafts = true;
 			}
 		}
