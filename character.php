@@ -138,10 +138,10 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	}
 	$clear_out .= "</tbody></table>";
 	$clear_out .= "</td><td style=\"width: 50%; vertical-align: top;\">";
-	if ($full_info) {
+	if (!$is_anon) {
 		$clear_out .= "<h3>Crafts</h3><table border=\"0\" style=\"width: 45%;\"><tbody>";
 		$skills = WGWGetSkillListForChar($charid, $worldid);
-		// Crafting skills are 48-57
+		// Crafting skills are 48-57, 59 is digging
 		global $g_wgwSkills;
 		$hascrafts = false;
 		for ($i = 48; $i <= 59; $i++) {
