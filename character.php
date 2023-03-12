@@ -137,16 +137,16 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		}
 	}
 	$clear_out .= "</tbody></table>";
-	$clear_out .= "</td><td style=\"width: 50%; vertical-align: top;\">";
+	$clear_out .= "</td><td style=\"width: 40%; vertical-align: top;\">";
 	if (!$is_anon) {
-		$clear_out .= "<h3>Crafts</h3><table border=\"0\" style=\"width: 45%;\"><tbody>";
+		$clear_out .= "<h3>Crafts</h3><table border=\"0\" style=\"width: 55%;\"><tbody>";
 		$skills = WGWGetSkillListForChar($charid, $worldid);
 		// Crafting skills are 48-57, 59 is digging
 		global $g_wgwSkills;
 		$hascrafts = false;
 		for ($i = 48; $i <= 59; $i++) {
 			if (array_key_exists($i, $skills) and $i != 58) {
-				$clear_out .= "<tr><td style=\"width: 10px;\">$g_wgwSkills[$i]</td><td style=\"text-align: right; width: 30px;\">" . $skills[$i] . "</td></tr>";
+				$clear_out .= "<tr><td style=\"\">$g_wgwSkills[$i]</td><td style=\"text-align: right;\">" . $skills[$i] . "</td></tr>";
 				$hascrafts = true;
 			}
 		}
