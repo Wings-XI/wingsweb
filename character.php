@@ -125,21 +125,32 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	$clear_out .= "<p>$job_str<br>" .
 		"Current location: " . WGWGetZoneName($basic_info["pos_zone"]) . "</p>";
 	// Top table (because we're going to split the screen to two columns for better usage)
+	$has75 = false;
 	$clear_out .= "<table border=\"0\" style=\"width: 100%\"><tbody><tr><td style=\"width: 50%; vertical-align: top\">";
+	$clear_out .= "<h3>Jobs</h3><table border=\"0\" style=\"width: 15%\"><tbody>";
 	if (!$is_anon or $full_info) {
 		// Job list
 		$jobs = WGWGetJobListForChar($charid, $worldid);
-		$clear_out .= "<h3>Jobs</h3><table border=\"0\" style=\"width: 15%\"><tbody>";
 		foreach ($jobs as $job => $joblevel) {
 			if ($joblevel != 0) {
+				if (!$has75 and $joblevel == 75) {
+					$has75 = true;
+				}
 				$clear_out .= "<tr><td style=\"width: 10px;\">$job</td><td style=\"text-align: right\">$joblevel</td></tr>";
 			}
 		}
+	} else {
+		$clear_out .= "Jobs only displayed if this char is not anon";
 	}
 	$clear_out .= "</tbody></table>";
 	$clear_out .= "</td><td style=\"width: 40%; vertical-align: top;\">";
-	if (!$is_anon) {
-		$clear_out .= "<h3>Crafts</h3><table border=\"0\" style=\"width: 55%;\"><tbody>";
+	// display crafts if:
+		// not anon
+		// no jobs at 75
+		// at least one job at 75 and flagged as mentor
+
+	$clear_out .= "<h3>Crafts</h3><table border=\"0\" style=\"width: 55%;\"><tbody>";
+	if (!($is_anon or ($has75 and !$ismentor))) {
 		$skills = WGWGetSkillListForChar($charid, $worldid);
 		// Crafting skills are 48-57, 59 is digging
 		global $g_wgwSkills;
@@ -154,6 +165,9 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		if (!$hascrafts) {
 			$clear_out .= "No crafts are leveled";
 		}
+	} else {
+		$clear_out .= "</tbody></table>";
+		$clear_out .= "Crafts only displayed if this char is:<li>not anon</li><li>if has lvl 75, is flagged as mentor</li>";
 	}
 	$clear_out .= "</td></tr></tbody></table>";
 	
