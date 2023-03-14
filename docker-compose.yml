@@ -1,0 +1,22 @@
+# docker compose build
+# copy and update configuration.php
+# docker compose up -d
+# optional: setup a separate nginx container to handle tls
+version: '3.1'
+
+services:
+  wingsweb:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./wingsweb/:/var/www/html/wings/
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # allows resolving the host's docker gateway address for db connection (mariadb must be listening on it)
+
+networks:
+  default:
+    name: nginx-network
+    external: true
+
