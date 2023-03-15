@@ -150,7 +150,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		// at least one job at 75 and flagged as mentor
 
 	$clear_out .= "<h3>Crafts</h3><table border=\"0\" style=\"width: 55%;\"><tbody>";
-	if (!($is_anon or ($has75 and !$ismentor))) {
+	if ($full_info or !($is_anon or ($has75 and !$ismentor))) {
 		$skills = WGWGetSkillListForChar($charid, $worldid);
 		// Crafting skills are 48-57, 59 is digging
 		global $g_wgwSkills;
