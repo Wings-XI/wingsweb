@@ -22,7 +22,7 @@ function WGWDoRollingXOR($indata, $inkey)
 	$res = "";
 	$datalen = strlen($indata);
 	for ($i = 0; $i < $datalen; $i++) {
-		$res .= chr(ord($indata[$i]) ^ (($keybytes[($i % 4)] + ($i / 4))) % 256);
+		$res .= chr(ord($indata[$i]) ^ (int) (($keybytes[($i % 4)] + ($i / 4))) % 256);
 	}
 	return $res;
 }
