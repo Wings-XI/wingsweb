@@ -1,11 +1,15 @@
-FROM php:7.4-apache
+FROM php:apache
 
 # INSTALL ZIP TO USE COMPOSER
 RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libzip-dev \
-    unzip
-RUN docker-php-ext-install zip mysqli
+    unzip \
+    libpng-dev
+# https://stackoverflow.com/questions/61228386/installing-gd-extension-in-docker
+RUN docker-php-ext-configure gd
+
+RUN docker-php-ext-install zip mysqli gd
 
 # INSTALL AND UPDATE COMPOSER
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -17,5 +21,7 @@ WORKDIR /usr/local/lib/php
 RUN composer require phpmailer/phpmailer
 RUN composer require php-amqplib/php-amqplib
 RUN composer require RobThree/TwoFactorAuth
+RUN composer require endroid/qr-code
+RUN composer require bacon/bacon-qr-code
 
 WORKDIR /var/www/html
