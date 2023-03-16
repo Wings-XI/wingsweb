@@ -82,7 +82,7 @@ function WGWShowMFAForm()
 	
 	$abuse_msg = "";
 	if (WGWConfig::$mfa_cooldown) {
-		$abuse_msg = "To prevent abuse, once 2FA is disabled you will not be able to enable it again until " . strftime("%a %Y/%m/%d %H:%M:%S", $now + WGWConfig::$mfa_cooldown) . " UTC.<br><br>";
+		$abuse_msg = "To prevent abuse, once 2FA is disabled you will not be able to enable it again until " . date("D Y/m/d H:i:s", $now + WGWConfig::$mfa_cooldown) . " UTC.<br><br>";
 	}
 	
 	if ($enabled) {
@@ -90,7 +90,7 @@ function WGWShowMFAForm()
 		WGWOutput::$out->write(str_replace("%COOLDOWN%", $abuse_msg, $g_wgwMFADisableForm));
 	}
 	else if (WGWConfig::$mfa_cooldown && WGWUser::$user->otp_change && WGWUser::$user->otp_change + WGWConfig::$mfa_cooldown >= $now) {
-		WGWOutput::$out->write("Two factor authntication has been recently disabled. It can be enabled again on " . strftime("%a %Y/%m/%d %H:%M:%S", WGWUser::$user->otp_change + WGWConfig::$mfa_cooldown) . " UTC.<br>");
+		WGWOutput::$out->write("Two factor authntication has been recently disabled. It can be enabled again on " . date("D Y/m/d H:i:s", WGWUser::$user->otp_change + WGWConfig::$mfa_cooldown) . " UTC.<br>");
 	}
 	else {
 		// Show enable form

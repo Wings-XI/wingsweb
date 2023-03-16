@@ -65,18 +65,18 @@ function WGWShowLANPartyModeForm()
 	}
 	if ($nexttime[0] >= $now) {
 		// Exception is already enabled
-		WGWOutput::$out->write("Temporary IP exception is <span style=\"color: green\">enabled</span> until " . strftime("%a %Y/%m/%d %H:%M:%S", $nexttime[0]) . " UTC.<br>");
+		WGWOutput::$out->write("Temporary IP exception is <span style=\"color: green\">enabled</span> until " . date("D Y/m/d H:i:s", $nexttime[0]) . " UTC.<br>");
 	}
 	else if ($nexttime[1] >= $now) {
 		// They already used it recently
-		WGWOutput::$out->write("Temporary IP exception had already been used recently. It will be available again on " . strftime("%a %Y/%m/%d %H:%M:%S", $nexttime[1]) . " UTC.<br>");
+		WGWOutput::$out->write("Temporary IP exception had already been used recently. It will be available again on " . date("D Y/m/d H:i:s", $nexttime[1]) . " UTC.<br>");
 	}
 	else {
 		// Show the grant button
 		WGWOutput::$out->write("<FORM METHOD=\"POST\" ONSUBMIT=\"return confirm('If you enable a temporary IP exception now you will not be able to use it again until the indicated time.\\nDo you wish to continue?');\">");
 		WGWOutput::$out->write("<INPUT TYPE=\"HIDDEN\" NAME=\"page\" VALUE=\"lanparty\"><INPUT TYPE=\"HIDDEN\" NAME=\"action\" VALUE=\"grant\">");
-		WGWOutput::$out->write("By clicking the button below you will receive a temporary IP exception until " . strftime("%a %Y/%m/%d %H:%M:%S", $now + WGWConfig::$temp_ip_exception_length) . " UTC.<br>");
-		WGWOutput::$out->write("Please note that once enabled the exception cannot be disabled until it expires. Once expired you will not be able to enable it again until " . strftime("%a %Y/%m/%d %H:%M:%S", $now + WGWConfig::$temp_ip_exception_length + WGWConfig::$temp_ip_exception_cooldown) . " UTC.<br><br>");
+		WGWOutput::$out->write("By clicking the button below you will receive a temporary IP exception until " . date("D Y/m/d H:i:s", $now + WGWConfig::$temp_ip_exception_length) . " UTC.<br>");
+		WGWOutput::$out->write("Please note that once enabled the exception cannot be disabled until it expires. Once expired you will not be able to enable it again until " . date("D Y/m/d H:i:s", $now + WGWConfig::$temp_ip_exception_length + WGWConfig::$temp_ip_exception_cooldown) . " UTC.<br><br>");
 		WGWOutput::$out->write("<INPUT TYPE=\"SUBMIT\" VALUE=\"Enable\"></FORM>");
 	}
 }
