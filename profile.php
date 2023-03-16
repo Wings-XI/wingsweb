@@ -64,7 +64,7 @@ $g_wgwPasswordChangeForm = <<<EOS
 	</center>
 EOS;
 
-function WGWShowWorldUserChars($worldid=100, $accountid)
+function WGWShowWorldUserChars($worldid, $accountid)
 {
 	$contents = WGWGetAccountContentIDs($accountid);
 	if (!$contents) {
