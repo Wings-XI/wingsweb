@@ -13,6 +13,18 @@ require_once("output.php");
 require_once("lists.php");
 require_once("user.php");
 
+function WGWPrintOnlineUserCount()
+{
+	global $g_base;
+	$where = "chars.charid IN (SELECT charid FROM accounts_sessions)";
+	$playerCount = 0;
+	foreach (WGWDB::$maps as $worldno => $worlddata) {
+		$result = WGWQueryCharactersBy($where, $worldno);
+		$playerCount = $playerCount + $result->num_rows;
+	}
+	print($playerCount);
+}
+
 function WGWPrintOnlineUsers($worldid=100)
 {
 	global $g_base;
