@@ -17,7 +17,7 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Connection\AMQPSSLConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-require_once("PhpAmqpLib/autoload.php");
+#require_once("PhpAmqpLib/autoload.php");
 
 global $g_wgwMQCnnections;
 $g_wgwMQCnnections = array();

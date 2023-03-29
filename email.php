@@ -13,9 +13,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
-require_once("PHPMailer/src/Exception.php");
-require_once("PHPMailer/src/PHPMailer.php");
-require_once("PHPMailer/src/SMTP.php");
+#require_once("PHPMailer/src/Exception.php");
+#require_once("PHPMailer/src/PHPMailer.php");
+#require_once("PHPMailer/src/SMTP.php");
 
 require_once("database.php");
 require_once("login.php");
