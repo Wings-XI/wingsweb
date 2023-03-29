@@ -74,7 +74,7 @@ global $g_base;
 global $g_wgwSignupNeedActivation;
 $g_wgwSignupNeedActivation = <<<EOS
 <h1>Just one more step</h1>
-Befre you can use your new account, you will need to verify your e-mail address.<br>
+Before you can use your new account, you will need to verify your e-mail address.<br>
 We have sent a message to %EMAIL%.<br>
 Please click the link in the message to activate your account.<br>
 If you did not receive the mail, please check your spam folder. Gmail users, please check the social and promitions tabs as well.<br>
