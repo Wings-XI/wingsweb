@@ -128,6 +128,9 @@ function WGWShowMainProfilePage()
 		WGWOutput::$out->write("<a href=\"$g_base?page=changepassword\">Change Password</a><br>");
 		WGWOutput::$out->write("<a href=\"$g_base?page=lanparty\">Enable temporary IP exception (LAN party mode)</a><br>");
 		WGWOutput::$out->write("<a href=\"$g_base?page=mfa\">Two factor authentication</a><br><br>");
+		if (WGWUser::$user->is_admin()) {
+			WGWOutput::$out->write("<a href=\"/gimmedbaccess/\">phpMyAdmin (only accessible when logged in via admin account)</a><br><br>");
+		}
 	}
 	WGWOutput::$out->write("<h3>My Characters:</h3>");
 	$num_chars = 0;
