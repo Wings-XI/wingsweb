@@ -68,12 +68,16 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		$clear_out .= "<p style=\"color: red\">Offline</p>";
 	}
 	// If GM then only other GMs can see info
-	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT * FROM chars WHERE charid=$charid");
+	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT *,(select FROM_UNIXTIME(value+255600) from char_vars v where varname='DynaReservationStart' and v.charid=c.charid) as dynatime,(select FROM_UNIXTIME(value+255600) from char_vars v where varname='Cosmo_Cleanse_TIME' and v.charid=c.charid) as limbustime,(select value from char_vars v where varname='[LOGIN_POINTS]totalPoints' and v.charid=c.charid) as logintotal FROM chars c WHERE charid=$charid");
 	$chardetails = $result->fetch_assoc();
 	if ($full_info) {
 		$create_time = $chardetails["timecreated"];
 		$last_play = $chardetails["lastupdate"];
-		$clear_out .= "<p>Creation time: $create_time<br>Last login: $last_play</p>";
+		$clear_out .= "<p>Creation time: $create_time<br>Last login: $last_play";
+		$dyna_time = $chardetails["dynatime"];
+		$limbus_time = $chardetails["limbustime"];
+		$login_total = $chardetails["logintotal"];
+		$clear_out .= "<p>Char timers:<br>&nbsp;Next Dyna: $dyna_time<br>&nbsp;Limbus Soap: $limbus_time<br>&nbsp;Login Points: $login_total</p>";
 	}
 	$isgm = $chardetails["gmlevel"] >= WGWConfig::$gm_threshold;
 	if ($isgm) {
