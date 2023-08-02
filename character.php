@@ -68,7 +68,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		$clear_out .= "<p style=\"color: red\">Offline</p>";
 	}
 	// If GM then only other GMs can see info
-	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT *,(select FROM_UNIXTIME(value+255600) from char_vars v where varname='DynaReservationStart' and v.charid=c.charid) as dynatime,(select FROM_UNIXTIME(value+255600) from char_vars v where varname='Cosmo_Cleanse_TIME' and v.charid=c.charid) as limbustime,(select value from char_vars v where varname='[LOGIN_POINTS]totalPoints' and v.charid=c.charid) as logintotal FROM chars c WHERE charid=$charid");
+	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT *,(select FROM_UNIXTIME(value+255600) from char_vars v where varname='DynaReservationStart' and v.charid=c.charid) as dynatime,(select FROM_UNIXTIME(value+255600) from char_vars v where varname='Cosmo_Cleanse_TIME' and v.charid=c.charid) as limbustime,(select login_points from char_points v where v.charid=c.charid) as logintotal FROM chars c WHERE charid=$charid");
 	$chardetails = $result->fetch_assoc();
 	if ($full_info) {
 		$create_time = $chardetails["timecreated"];
