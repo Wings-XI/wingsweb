@@ -54,7 +54,7 @@ $g_wgwOTPPage = <<<EOS
 				<tbody>
 					<tr>
 						<td>One time code: </td>
-						<td><input type="text" name="otp" size="30"></td>
+						<td><input type="text" name="otp" size="30" autofocus></td>
 					</tr>
 					<tr>
 						<td></td>
