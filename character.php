@@ -68,7 +68,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		$clear_out .= "<p style=\"color: red\">Offline</p>";
 	}
 	// If GM then only other GMs can see info
-	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT *,(select FROM_UNIXTIME(value+255600) from char_vars v where varname='DynaReservationStart' and v.charid=c.charid) as dynatime,(select FROM_UNIXTIME(value+255600) from char_vars v where varname='Cosmo_Cleanse_TIME' and v.charid=c.charid) as limbustime,(select login_points from char_points v where v.charid=c.charid) as logintotal FROM chars c WHERE charid=$charid");
+	$result = WGWDB::$maps[$worldid]["db"]->query("SELECT *,(select FROM_UNIXTIME(value+255600) from char_vars v where varname='DynaReservationStart' and v.charid=c.charid) as dynatime,(select FROM_UNIXTIME(value+255600) from char_vars v where varname='Cosmo_Cleanse_TIME' and v.charid=c.charid) as limbustime,(select login_points from char_points v where v.charid=c.charid) as logintotal,(select value from char_vars v where varname='[NomadBon]Ticket' and v.charid=c.charid) as bonanzaticket FROM chars c WHERE charid=$charid");
 	$chardetails = $result->fetch_assoc();
 	if ($full_info) {
 		$create_time = $chardetails["timecreated"];
@@ -77,7 +77,8 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 		$dyna_time = $chardetails["dynatime"];
 		$limbus_time = $chardetails["limbustime"];
 		$login_total = $chardetails["logintotal"];
-		$clear_out .= "<p>Char timers:<br>&nbsp;Next Dyna: $dyna_time<br>&nbsp;Limbus Soap: $limbus_time<br>&nbsp;Login Points: $login_total</p>";
+		$bonanzaticket = $chardetails["bonanzaticket"];
+		$clear_out .= "<p>Char timers:<br>&nbsp;Next Dyna: $dyna_time<br>&nbsp;Limbus Soap: $limbus_time<br>&nbsp;Login Points: $login_total<br>&nbsp;<a href='https://www.bg-wiki.com/ffxi/Nomad_Mog_Bonanza_I'>Ticket Number</a>: $bonanzaticket</p>";
 	}
 	$isgm = $chardetails["gmlevel"] >= WGWConfig::$gm_threshold;
 	if ($isgm) {
