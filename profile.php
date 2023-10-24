@@ -103,13 +103,14 @@ function WGWShowMainProfilePage()
 	WGWOutput::$out->title = "Account - $acct_esc";
 	WGWOutput::$out->write("<h2>$acct_esc</h2>");
 	$acc_escaped = WGWDB::$con->real_escape_string($accname);
-	$result = WGWDB::$con->query("SELECT * FROM  " . WGWConfig::$db_prefix . "accounts WHERE username='$acc_escaped' LIMIT 1;");
+	$result = WGWDB::$con->query("SELECT *,(select concat(value,' (',chars.charname,')') from ffxiwings.char_vars left join ffxiwings.chars using (charid) where varname = '[NomadBon]Ticket' and chars.accid = id limit 1) as bonanzaticket FROM  " . WGWConfig::$db_prefix . "accounts WHERE username='$acc_escaped' LIMIT 1;");
 	if (!$result || $result->num_rows == 0) {
 		WGWOutput::$out->write("No such account!");
 		return;
 	}
 	$acc_info = $result->fetch_assoc();
 	$email = $acc_info["email"];
+	$bonanzaticket = $acc_info["bonanzaticket"];
 	$acc_status = $acc_info["status"];
 	$create_time = $acc_info["timecreated"];
 	if ($acc_status == 2) {
@@ -122,6 +123,7 @@ function WGWShowMainProfilePage()
 	}
 	WGWOutput::$out->write("Creation time: $create_time<br>");
 	WGWOutput::$out->write("Email: " . htmlspecialchars($email) . "<br>");
+	WGWOutput::$out->write("&nbsp;<a href='https://www.bg-wiki.com/ffxi/Nomad_Mog_Bonanza_I'>Ticket Number</a>: $bonanzaticket<br>");
 	if (WGWUser::$user->id == $accid) {
 		// TODO: Support admin change, currently too tied to the current user
 		WGWOutput::$out->write("<a href=\"$g_base?page=changemail\">Change E-mail</a><br>");
