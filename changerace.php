@@ -226,7 +226,8 @@ function WGWShowChangeRaceForm($charname, $worldid=100, $newdata = null)
 
 function WGWRaceChangeAvailabile($worldid, $charid)
 {
-	return $result = WGWDB::$maps[$worldid]["db"]->query("SELECT (UNIX_TIMESTAMP() - value) > 30 * 60 as value FROM char_vars WHERE charid=$charid AND varname='RACE_CHANGED'");
+	// return true if last race change was within 30 minutes or longer than 30 days
+	return $result = WGWDB::$maps[$worldid]["db"]->query("SELECT ((UNIX_TIMESTAMP() - value) > 30 * 60)*((UNIX_TIMESTAMP() - value) < 30 * 24 * 60 * 60) as value FROM char_vars WHERE charid=$charid AND varname='RACE_CHANGED'");
 }
 
 function WGWRaceChange()
