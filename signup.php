@@ -144,7 +144,7 @@ function WGWProcessSignup()
 		WGWUser::$user->logout();
 	}
 	if (!WGWConfig::$signup_allowed) {
-		WGWOutput::$out->write("New user registrations are currently not available.");
+		WGWOutput::$out->write("New user registrations are currently not available. We are undergoing a merger with <a href=\"https://www.catseyexi.com/login.php\">CatsEyeXI</a>, please join our discord for announcements on when Wings-Era Warriors are allowed to be created there.");
 		die(0);
 	}
 	$next_signup = WGWIsThrottleBlocked();
