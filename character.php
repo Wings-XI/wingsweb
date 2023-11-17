@@ -128,6 +128,7 @@ function WGWShowCharacterBasicInfo($charname, $worldid=100)
 	
 	$clear_out .= "<p>$job_str<br>" .
 		"Current location: " . WGWGetZoneName($basic_info["pos_zone"]) . "</p>";
+	$clear_out .= "<p>CharID: $charid</p>";
 	// Top table (because we're going to split the screen to two columns for better usage)
 	$has75 = false;
 	$clear_out .= "<table border=\"0\" style=\"width: 100%\"><tbody><tr><td style=\"width: 50%; vertical-align: top\">";
