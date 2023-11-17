@@ -403,6 +403,7 @@ class WGWUser
 	
 	public function changepassword($old, $new, $verify, $userid, $resetpwd=false)
 	{
+		return "Password changes disabled.<br>";
 		if (!$resetpwd) {
 			if (!$this->is_logged_in()) {
 				return "Not logged in<br>";
